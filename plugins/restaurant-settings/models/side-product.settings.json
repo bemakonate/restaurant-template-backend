@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "side_products",
+  "info": {
+    "name": "Side Product"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true,
+    "increments": true,
+    "comment": ""
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "additionalCost": {
+      "type": "decimal"
+    },
+    "description": {
+      "type": "text"
+    },
+    "products": {
+      "plugin": "restaurant-settings",
+      "via": "sideProducts",
+      "collection": "product"
+    }
+  }
+}

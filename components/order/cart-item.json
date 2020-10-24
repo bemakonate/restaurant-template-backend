@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_order_cart_items",
+  "info": {
+    "name": "cartItem",
+    "icon": "shopping-cart"
+  },
+  "options": {},
+  "attributes": {
+    "productPrice": {
+      "type": "decimal"
+    },
+    "productQuantity": {
+      "type": "decimal"
+    },
+    "productName": {
+      "type": "string"
+    },
+    "totalPrice": {
+      "type": "decimal"
+    },
+    "productId": {
+      "type": "string"
+    },
+    "sideOrders": {
+      "type": "component",
+      "repeatable": true,
+      "component": "order.side-order"
+    }
+  }
+}

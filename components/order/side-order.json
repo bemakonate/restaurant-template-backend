@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_order_side_orders",
+  "info": {
+    "name": "sideOrder",
+    "icon": "utensils"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "sideOrderId": {
+      "type": "string"
+    },
+    "additionalCost": {
+      "type": "decimal"
+    }
+  }
+}

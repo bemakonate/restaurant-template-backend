@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "name": "product"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true,
+    "increments": true,
+    "comment": ""
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "sideOrdersPerQuantity": {
+      "type": "integer"
+    },
+    "description": {
+      "type": "text"
+    },
+    "sideProducts": {
+      "plugin": "restaurant-settings",
+      "collection": "side-product",
+      "via": "products",
+      "dominant": true
+    },
+    "categories": {
+      "plugin": "restaurant-settings",
+      "via": "products",
+      "collection": "category"
+    }
+  }
+}

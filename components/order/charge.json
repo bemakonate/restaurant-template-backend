@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_order_charges",
+  "info": {
+    "name": "charge",
+    "icon": "credit-card"
+  },
+  "options": {},
+  "attributes": {
+    "total": {
+      "type": "decimal"
+    },
+    "taxes": {
+      "type": "decimal"
+    },
+    "subtotal": {
+      "type": "decimal"
+    }
+  }
+}

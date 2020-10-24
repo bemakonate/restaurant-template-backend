@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "name": "order"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true,
+    "increments": true,
+    "comment": ""
+  },
+  "attributes": {
+    "orderId": {
+      "type": "string"
+    },
+    "orderDate": {
+      "type": "string"
+    },
+    "paymentIntent": {
+      "type": "string"
+    },
+    "customerDetails": {
+      "type": "component",
+      "repeatable": false,
+      "component": "order.customer-details"
+    },
+    "charge": {
+      "type": "component",
+      "repeatable": false,
+      "component": "order.charge"
+    },
+    "cart": {
+      "type": "component",
+      "repeatable": true,
+      "component": "order.cart-item"
+    }
+  }
+}

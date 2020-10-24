@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_order_customer_details",
+  "info": {
+    "name": "customerDetails",
+    "icon": "user"
+  },
+  "options": {},
+  "attributes": {
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "phone": {
+      "type": "string"
+    }
+  }
+}
