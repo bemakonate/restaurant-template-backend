@@ -10,7 +10,7 @@
     },
     {
       "method": "POST",
-      "path": "/",
+      "path": "/business-hours",
       "handler": "restaurant-settings.updateBusinessHours",
       "config": {
         "policies": []

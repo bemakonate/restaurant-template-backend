@@ -20,18 +20,18 @@ module.exports = {
     const plugin = strapi.plugins['restaurant-settings'];
     const pluginStore = plugin.services.functions.pluginStore();
 
-
-
     const businessHours = await pluginStore.get({ key: 'businessHours' });
     // Send 200 `ok`
 
-    const result = businessHours ? JSON.stringify(businessHours) : '';
-    return result;
+    return {
+      open: JSON.stringify(businessHours.open || null),
+      closed: businessHours.closed || null,
+    };
 
   },
   updateBusinessHours: async (ctx) => {
     const { user } = ctx.state;
-    const { businessHours } = ctx.request.body;
+    const { open: openHours, closed: closedHours } = ctx.request.body;
     // const businessHours = {
     //   5: null,
     //   6: null,
@@ -52,16 +52,16 @@ module.exports = {
       return ctx.unauthorized("Only admin allowed")
     }
 
-    if (!businessHours) {
+    if (!openHours) {
       return ctx.throw(400, "Please provide the business hours")
     }
 
-    const isBusinessHoursValid = plugin.services.functions.validateWeeklyHours(businessHours);
+    const isBusinessHoursValid = plugin.services.functions.validateWeeklyHours(openHours);
     if (isBusinessHoursValid.error) {
       return ctx.throw(400, isBusinessHoursValid.error.message);
     }
 
-    const result = await pluginStore.set({ key: 'businessHours', value: businessHours });
+    const result = await pluginStore.set({ key: 'businessHours', value: { open: openHours, closed: closedHours } });
 
     ctx.send({ result });
   },
@@ -97,7 +97,7 @@ module.exports = {
   },
   updateCategory: async (ctx) => {
     const { id } = ctx.params;
-    const { sourcedHoursFrom, hours } = ctx.request.body;
+    const { source, hours } = ctx.request.body;
 
     const plugin = strapi.plugins[pluginId];
     const pluginStore = plugin.services.functions.pluginStore();
@@ -111,9 +111,9 @@ module.exports = {
 
     let newCategoryHours = null;
 
-    switch (sourcedHoursFrom) {
+    switch (source) {
       case ('business'):
-        newCategoryHours = { sourcedHoursFrom: 'business', hours: null }
+        newCategoryHours = { source: 'business', hours: null }
         break;
       case ('custom'):
         //validate if hours are valid
@@ -121,10 +121,10 @@ module.exports = {
         if (isHoursValid.error) {
           ctx.throw(400, "The hours for category is invalid")
         }
-        newCategoryHours = { sourcedHoursFrom: 'custom', hours: hours }
+        newCategoryHours = { source: 'custom', hours: hours }
         break;
       default:
-        newCategoryHours = { sourcedHoursFrom: null, hours: null }
+        newCategoryHours = { source: null, hours: null }
 
     }
 

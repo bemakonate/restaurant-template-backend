@@ -13,22 +13,21 @@ const addCategoryHours = async (category) => {
     const categoryHours = await pluginStore().get({ key: `categories.${category.id}.hours` });
     const businessHours = await pluginStore().get({ key: 'businessHours' });
 
-
-    if (categoryHours && categoryHours.sourcedHoursFrom === 'business') {
+    if (categoryHours && categoryHours.source === 'business') {
         return {
             ...category,
-            sourcedHoursFrom: categoryHours.sourcedHoursFrom,
             hours: {
-                open: JSON.stringify(businessHours),
-                closed: JSON.stringify(null),
+                source: categoryHours.source,
+                open: JSON.stringify(businessHours.open),
+                closed: JSON.stringify(businessHours.closed),
             }
         }
     }
-    else if (categoryHours && categoryHours.sourcedHoursFrom === 'custom') {
+    else if (categoryHours && categoryHours.source === 'custom') {
         return {
             ...category,
-            sourcedHoursFrom: categoryHours.sourcedHoursFrom,
             hours: {
+                source: categoryHours.source,
                 open: JSON.stringify(categoryHours.hours),
                 closed: JSON.stringify(null),
             }
@@ -38,6 +37,7 @@ const addCategoryHours = async (category) => {
         return {
             ...category,
             hours: {
+                source: categoryHours.source,
                 open: JSON.stringify(null),
                 closed: JSON.stringify(null),
             }

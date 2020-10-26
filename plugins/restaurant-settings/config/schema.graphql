@@ -16,7 +16,7 @@ module.exports = {
     restaurantSideProduct(id: ID): restaurantSettingsSideProduct!
     restaurantCategories: [restaurantSettingsCategory!]
     restaurantCategory(id: ID): restaurantSettingsCategory!
-    restaurantBusinessHours: JSON
+    restaurantBusinessHours: weeklyHours!
 
 
   `,

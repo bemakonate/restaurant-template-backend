@@ -12,7 +12,7 @@ const CategoriesPage = (props) => {
         const run = async () => {
             setFetchingTimedCategories(true);
             const res = await request(`/${pluginId}/categories`, { method: 'GET' });
-            setTimedCategories(res.categories);
+            setTimedCategories(res);
             setFetchingTimedCategories(false);
         }
         run();

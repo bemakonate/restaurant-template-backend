@@ -37,6 +37,7 @@ const customTypes = () => `
 type weeklyHours{
     open:JSON
     closed:JSON
+    source: String
 }
 `;
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import WeeklyHours from '../../../components/WeeklyHoursModule';
+import WeeklyHours, { EnhancedWeeklyHours } from '../../../components/WeeklyHoursModule';
 import Toggle from '../../../components/strapiStyles/Toggle/StrapiToggle';
 import pluginId from '../../../pluginId';
 import { compare } from '../../../utils/helpers';
@@ -27,10 +27,10 @@ const CategoryPage = (props) => {
 
 
     useEffect(() => {
-        if (!fetchingTimedCategory && timedCategorySource === 'custom' && !compare(timedCategory.hours, currentWeeklyHours)) {
+        if (!fetchingTimedCategory && timedCategorySource === 'custom' && !compare(JSON.parse(timedCategory.hours.open), currentWeeklyHours)) {
             isSetChangesSaved(false);
         }
-        else if (!fetchingTimedCategory && timedCategory && timedCategorySource !== timedCategory.sourcedHoursFrom) {
+        else if (!fetchingTimedCategory && timedCategory && timedCategorySource !== timedCategory.hours.source) {
             isSetChangesSaved(false);
         }
         else {
@@ -53,10 +53,10 @@ const CategoryPage = (props) => {
     const getTimeCategoryData = async () => {
         setFetchingTimedCategory(true);
         try {
-            const { category } = await request(`/${pluginId}/categories/${id}`);
+            const category = await request(`/${pluginId}/categories/${id}`, { method: "GET" });
             setTimedCategory(category);
-            setTimedCategoryHours(category.hours);
-            setTimedCategorySource(category.sourcedHoursFrom);
+            setTimedCategoryHours(JSON.parse(category.hours.open));
+            setTimedCategorySource(category.hours.source);
             setFetchingTimedCategory(false);
         } catch (error) {
             strapi.notification.error(error.message);
@@ -72,7 +72,7 @@ const CategoryPage = (props) => {
                 method: "POST",
                 body: {
                     hours: timedCategoryHours,
-                    sourcedHoursFrom: timedCategorySource,
+                    source: timedCategorySource,
                 }
             });
             strapi.notification.success("success");
@@ -121,18 +121,17 @@ const CategoryPage = (props) => {
     switch (timedCategorySource) {
         case 'custom':
             categoryHoursJSX = null;
+            const resetValue = JSON.parse(timedCategory.hours.open);
             if (!fetchingTimedCategory) {
                 categoryHoursJSX = (
                     <div>
-                        <button onClick={() => setTimedCategoryHours(null)}>Clear</button>
-                        <WeeklyHours
-                            hideComponentSubmit
+                        <EnhancedWeeklyHours
                             originWeeklyHours={timedCategoryHours}
                             getCurrentMomentWeeklyHours={(weeklyHours) => setCurrentWeeklyHours(weeklyHours)}
+                            resetValue={resetValue}
                             forceSubmit={submitWeeklyHours}
                             afterSubmit={afterWeeklyHoursSubmit} />
                     </div>
-
                 );
             }
             break;
