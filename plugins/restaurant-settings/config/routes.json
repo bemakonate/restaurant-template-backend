@@ -2,8 +2,72 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/business-hours",
+      "handler": "restaurant-settings.getBusinessHours",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
       "path": "/",
-      "handler": "restaurant-settings.index",
+      "handler": "restaurant-settings.updateBusinessHours",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/categories",
+      "handler": "restaurant-settings.getCategories",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/categories/:id",
+      "handler": "restaurant-settings.getCategory",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/categories/:id",
+      "handler": "restaurant-settings.updateCategory",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/products",
+      "handler": "restaurant-settings.getProducts",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/products/:id",
+      "handler": "restaurant-settings.getProduct",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/side-products",
+      "handler": "restaurant-settings.getSideProducts",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/side-products/:id",
+      "handler": "restaurant-settings.getSideProduct",
       "config": {
         "policies": []
       }

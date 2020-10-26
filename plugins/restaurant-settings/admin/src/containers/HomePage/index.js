@@ -1,20 +1,17 @@
-/*
- *
- * HomePage
- *
- */
 
 import React, { memo } from 'react';
 // import PropTypes from 'prop-types';
 import pluginId from '../../pluginId';
 
 const HomePage = () => {
-  return (
-    <div>
-      <h1>{pluginId}&apos;s HomePage</h1>
-      <p>Happy coding</p>
-    </div>
-  );
+    return (
+        <div>
+            <p>Happy coding</p>
+            <a href={`/plugins/${pluginId}/business-hours`}>Business Hours</a>
+            <br />
+            <a href={`/plugins/${pluginId}/categories`}>Categories Hours</a>
+        </div>
+    );
 };
 
 export default memo(HomePage);

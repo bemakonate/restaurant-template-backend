@@ -1,0 +1,56 @@
+const util = require('util');
+
+
+const graphqlTypes = strapi.plugins['restaurant-settings'].services.gql.types();
+const customTypes = strapi.plugins['restaurant-settings'].services.gql.customTypes();
+
+module.exports = {
+  definition: `
+    ${customTypes}
+    ${graphqlTypes}
+  `,
+  query: `
+    restaurantProducts: [restaurantSettingsProduct!]
+    restaurantProduct(id: ID): restaurantSettingsProduct!
+    restaurantSideProducts: [restaurantSettingsSideProduct!]
+    restaurantSideProduct(id: ID): restaurantSettingsSideProduct!
+    restaurantCategories: [restaurantSettingsCategory!]
+    restaurantCategory(id: ID): restaurantSettingsCategory!
+    restaurantBusinessHours: JSON
+
+
+  `,
+  type: {},
+  resolver: {
+    Query: {
+        restaurantProducts:{
+            description: 'This is the resturant plugin',
+            resolver: 'plugins::restaurant-settings.restaurant-settings.getProducts',
+        },
+        restaurantProduct:{
+            description: 'This is the resturant plugin',
+            resolver: 'plugins::restaurant-settings.restaurant-settings.getProduct',
+        },
+        restaurantSideProducts:{
+            description: 'This is the resturant plugin',
+            resolver: 'plugins::restaurant-settings.restaurant-settings.getSideProducts',
+        },
+        restaurantSideProduct:{
+            description: 'This is the resturant plugin',
+            resolver: 'plugins::restaurant-settings.restaurant-settings.getSideProduct',        
+        },
+        restaurantCategories:{
+            description: 'This is the resturant plugin',
+            resolver: 'plugins::restaurant-settings.restaurant-settings.getCategories',        
+        },
+        restaurantCategory:{
+            description: 'This is the resturant plugin',
+            resolver: 'plugins::restaurant-settings.restaurant-settings.getCategory',     
+        },
+        restaurantBusinessHours:{
+            description: 'This is the resturant plugin',
+            resolver: 'plugins::restaurant-settings.restaurant-settings.getBusinessHours',     
+        }
+  }
+}
+}

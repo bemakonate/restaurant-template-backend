@@ -1,0 +1,19 @@
+
+.BusinessSlotRow{
+    display:flex;
+    align-items:flex-end;
+    margin-bottom:10px;
+}
+
+.BusinessSlot{
+    display:flex;
+    align-items:center;
+
+}
+
+
+.DayContainer{
+    display:flex;
+    align-items:flex-start;
+    margin-bottom:60px;
+}
