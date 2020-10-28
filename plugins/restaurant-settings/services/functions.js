@@ -32,12 +32,12 @@ const addCategoryHours = async (category) => {
                 closed: JSON.stringify(null),
             }
         }
-
-    } else {
+    }
+    else {
         return {
             ...category,
             hours: {
-                source: categoryHours.source,
+                source: 'none',
                 open: JSON.stringify(null),
                 closed: JSON.stringify(null),
             }

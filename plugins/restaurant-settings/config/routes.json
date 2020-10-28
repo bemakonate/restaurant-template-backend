@@ -3,7 +3,7 @@
     {
       "method": "GET",
       "path": "/business-hours",
-      "handler": "restaurant-settings.getBusinessHours",
+      "handler": "business-hours.getBusinessHours",
       "config": {
         "policies": []
       }
@@ -11,15 +11,17 @@
     {
       "method": "POST",
       "path": "/business-hours",
-      "handler": "restaurant-settings.updateBusinessHours",
+      "handler": "business-hours.updateBusinessHours",
       "config": {
-        "policies": []
+        "policies": [
+          "plugins::restaurant-settings.isAdmin"
+        ]
       }
     },
     {
       "method": "GET",
       "path": "/categories",
-      "handler": "restaurant-settings.getCategories",
+      "handler": "categories.getCategories",
       "config": {
         "policies": []
       }
@@ -27,23 +29,27 @@
     {
       "method": "GET",
       "path": "/categories/:id",
-      "handler": "restaurant-settings.getCategory",
+      "handler": "categories.getCategory",
       "config": {
-        "policies": []
+        "policies": [
+          "plugins::restaurant-settings.isCategory"
+        ]
       }
     },
     {
       "method": "POST",
       "path": "/categories/:id",
-      "handler": "restaurant-settings.updateCategory",
+      "handler": "categories.updateCategory",
       "config": {
-        "policies": []
+        "policies": [
+          "plugins::restaurant-settings.isCategory"
+        ]
       }
     },
     {
       "method": "GET",
       "path": "/products",
-      "handler": "restaurant-settings.getProducts",
+      "handler": "products.getProducts",
       "config": {
         "policies": []
       }
@@ -51,7 +57,7 @@
     {
       "method": "GET",
       "path": "/products/:id",
-      "handler": "restaurant-settings.getProduct",
+      "handler": "products.getProduct",
       "config": {
         "policies": []
       }
@@ -59,7 +65,7 @@
     {
       "method": "GET",
       "path": "/side-products",
-      "handler": "restaurant-settings.getSideProducts",
+      "handler": "side-products.getSideProducts",
       "config": {
         "policies": []
       }
@@ -67,7 +73,23 @@
     {
       "method": "GET",
       "path": "/side-products/:id",
-      "handler": "restaurant-settings.getSideProduct",
+      "handler": "side-products.getSideProduct",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/orders/payment",
+      "handler": "orders.setUpStripe",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/orders/create",
+      "handler": "orders.createOrder",
       "config": {
         "policies": []
       }

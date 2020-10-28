@@ -161,7 +161,7 @@ const CategoryPage = (props) => {
             <ul>
                 <SourceOption value="custom">Custom Hours</SourceOption>
                 <SourceOption value="business">Business Hours</SourceOption>
-                <SourceOption value={null}>None</SourceOption>
+                <SourceOption value="none">None</SourceOption>
             </ul>
             {categoryHoursJSX}
 

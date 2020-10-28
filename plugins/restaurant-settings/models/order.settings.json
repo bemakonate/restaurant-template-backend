@@ -17,7 +17,7 @@
     "orderDate": {
       "type": "string"
     },
-    "paymentIntent": {
+    "paymentIntentId": {
       "type": "string"
     },
     "customerDetails": {

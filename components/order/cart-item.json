@@ -21,10 +21,13 @@
     "productId": {
       "type": "string"
     },
-    "sideOrders": {
+    "specialRequest": {
+      "type": "text"
+    },
+    "sideProducts": {
       "type": "component",
       "repeatable": true,
-      "component": "order.side-order"
+      "component": "order.side-product"
     }
   }
 }

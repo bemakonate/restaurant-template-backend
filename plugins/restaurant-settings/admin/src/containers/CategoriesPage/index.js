@@ -42,7 +42,7 @@ const CategoriesPage = (props) => {
             return {
                 id: timedCategory.id,
                 name: timedCategory.name,
-                hours: timedCategory.sourcedHoursFrom,
+                hours: timedCategory.hours.source,
             }
         })
 

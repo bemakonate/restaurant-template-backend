@@ -1,7 +1,7 @@
 {
-  "collectionName": "components_order_side_orders",
+  "collectionName": "components_order_side_products",
   "info": {
-    "name": "sideOrder",
+    "name": "sideProduct",
     "icon": "utensils"
   },
   "options": {},
@@ -9,7 +9,7 @@
     "name": {
       "type": "string"
     },
-    "sideOrderId": {
+    "sideProductId": {
       "type": "string"
     },
     "additionalCost": {

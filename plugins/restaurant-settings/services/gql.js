@@ -3,9 +3,11 @@ type restaurantSettingsProduct {
     id: ID!
     created_at: DateTime!
     updated_at: DateTime!
+    createdAt: DateTime!
+    updatedAt: DateTime!
     name: String
     price: Float
-    sideOrdersPerQuantity: Int
+    sideProductsPerQuantity: Int
     description: String
     sideProducts(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsSideProduct]
     categories(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsCategory]
@@ -15,6 +17,8 @@ type restaurantSettingsSideProduct {
     id: ID!
     created_at: DateTime!
     updated_at: DateTime!
+    createdAt: DateTime!
+    updatedAt: DateTime!
     name: String
     additionalCost: Float
     description: String
@@ -25,6 +29,8 @@ type restaurantSettingsCategory {
     id: ID!
     created_at: DateTime!
     updated_at: DateTime!
+    createdAt: DateTime!
+    updatedAt: DateTime!
     name: String
     description: String
     createCategoryPage: Boolean

@@ -25,31 +25,31 @@ module.exports = {
     Query: {
         restaurantProducts:{
             description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.restaurant-settings.getProducts',
+            resolver: 'plugins::restaurant-settings.products.getProducts',
         },
         restaurantProduct:{
             description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.restaurant-settings.getProduct',
+            resolver: 'plugins::restaurant-settings.products.getProduct',
         },
         restaurantSideProducts:{
             description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.restaurant-settings.getSideProducts',
+            resolver: 'plugins::restaurant-settings.side-products.getSideProducts',
         },
         restaurantSideProduct:{
             description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.restaurant-settings.getSideProduct',        
+            resolver: 'plugins::restaurant-settings.side-products.getSideProduct',        
         },
         restaurantCategories:{
             description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.restaurant-settings.getCategories',        
+            resolver: 'plugins::restaurant-settings.categories.getCategories',        
         },
         restaurantCategory:{
             description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.restaurant-settings.getCategory',     
+            resolver: 'plugins::restaurant-settings.categories.getCategory',     
         },
         restaurantBusinessHours:{
             description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.restaurant-settings.getBusinessHours',     
+            resolver: 'plugins::restaurant-settings.business-hours.getBusinessHours',     
         }
   }
 }
