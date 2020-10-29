@@ -4,6 +4,7 @@ import App from './containers/App';
 import Initializer from './containers/Initializer';
 import lifecycles from './lifecycles';
 import trads from './translations';
+import PluginSecretsPage from './containers/PluginSecretsPage'
 
 export default strapi => {
   const pluginDescription = pluginPkg.strapi.description || pluginPkg.description;
@@ -26,6 +27,26 @@ export default strapi => {
     name,
     preventComponentRendering: false,
     trads,
+    settings: {
+      menuSection: {
+        id: "Internalization",
+        title: {
+          id: pluginId,
+          defaultMessage: 'Restuarant Settings'
+        },
+        links: [
+          {
+            title: {
+              id: `${pluginId}.secrets`,
+              defaultMessage: 'Secrets'
+            },
+            to: `${strapi.settingsBaseURL}/${pluginId}/secrets`,
+            Component: PluginSecretsPage,
+          }
+        ]
+      },
+
+    },
     menu: {
       pluginsSectionLinks: [
         {

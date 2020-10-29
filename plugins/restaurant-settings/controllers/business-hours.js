@@ -1,3 +1,4 @@
+const pluginId = require("../admin/src/pluginId");
 
 // const businessHours = {
 //   5: null,
@@ -10,7 +11,7 @@
 // };
 module.exports = {
     getBusinessHours: async (ctx) => {
-        const plugin = strapi.plugins['restaurant-settings'];
+        const plugin = strapi.plugins[pluginId];
         const pluginStore = plugin.services.functions.pluginStore();
 
         const businessHours = await pluginStore.get({ key: 'businessHours' });
@@ -25,7 +26,7 @@ module.exports = {
     updateBusinessHours: async (ctx) => {
         const { open: openHours, closed: closedHours } = ctx.request.body;
 
-        const plugin = strapi.plugins['restaurant-settings'];
+        const plugin = strapi.plugins[pluginId];
         const pluginStore = plugin.services.functions.pluginStore();
 
 

@@ -1,6 +1,6 @@
 const pluginId = require("../admin/src/pluginId");
 const { sanitizeEntity } = require('strapi-utils');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const uninitializedStripe = require('stripe');
 const orderid = require('order-id')(process.env.ORDER_ID_SECRET);
 const moment = require('moment-timezone');
 
@@ -13,6 +13,10 @@ module.exports = {
         let reciptCart = []; //Because stripe wants less than 500 char
 
         const plugin = strapi.plugins[pluginId];
+        const pluginStore = plugin.services.functions.pluginStore();
+
+        const { stripePKSecret } = await pluginStore.get({ key: 'secrets' })
+        const stripe = uninitializedStripe(stripePKSecret);
 
         const validatedCart = await plugin.services.cart.validateCart({
             cart,
@@ -25,6 +29,8 @@ module.exports = {
         const subtotal = plugin.services.cart.cartSubtotal(validatedCart);
         const total = plugin.services.cart.cartTotal(validatedCart);
         const taxes = plugin.services.cart.cartTaxes(validatedCart);
+
+
 
         try {
             const paymentIntent = await stripe.paymentIntents.create({
@@ -47,14 +53,18 @@ module.exports = {
         }
     },
     createOrder: async (ctx) => {
-
-        const plugin = strapi.plugins[pluginId];
-
         const {
             paymentIntent,
             cart,
             contact
         } = ctx.request.body;
+
+
+        const plugin = strapi.plugins[pluginId];
+        const pluginStore = plugin.services.functions.pluginStore();
+
+        const { stripePKSecret } = await pluginStore.get({ key: 'secrets' })
+        const stripe = uninitializedStripe(stripePKSecret);
 
         //Payment intent for validation
         let paymentInfo;

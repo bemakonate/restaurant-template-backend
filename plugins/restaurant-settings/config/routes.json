@@ -93,6 +93,26 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/settings/secrets",
+      "handler": "restaurant-settings.getSecrets",
+      "config": {
+        "policies": [
+          "plugins::restaurant-settings.isAdmin"
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/settings/secrets",
+      "handler": "restaurant-settings.setSecrets",
+      "config": {
+        "policies": [
+          "plugins::restaurant-settings.isAdmin"
+        ]
+      }
     }
   ]
 }
