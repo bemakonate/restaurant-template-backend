@@ -1,12 +1,37 @@
 const { arrayEquals, validateHhMm } = require('./helpers');
 const pluginId = require("../admin/src/pluginId");
 const { sanitizeEntity } = require('strapi-utils');
+const moment = require('moment-business-time');
 
 const pluginStore = () => strapi.store({
     environment: strapi.config.environment,
     type: 'plugin',
     name: 'bemak-restaurant-settings'
 })
+
+const isOpenForPickUp = ({ pickUpTime, hours }) => {
+    const defaultWorkingHours = {
+        0: null,
+        1: null,
+        2: null,
+        3: null,
+        4: null,
+        5: null,
+        6: null
+    }
+    //1.define a moment locale for category hours
+    const momentLocale = moment.updateLocale('en', {
+        workinghours: JSON.parse(hours.open) || defaultWorkingHours,
+        holidays: JSON.parse(hours.closed),
+    });
+
+    //2.check to see if the category is available for pickupTime
+
+    const momentPickUpTime = moment(new Date(pickUpTime));
+    const isOpenForPickUp = momentPickUpTime.isWorkingTime();
+
+    return isOpenForPickUp;
+}
 
 const addCategoryHours = async (category) => {
 
@@ -43,39 +68,120 @@ const addCategoryHours = async (category) => {
             }
         }
     }
-
-
 }
 
-const populatedSanitizedCategory = async (id) => {
+const addProductHours = async (product) => {
+    const productHours = await pluginStore().get({ key: `products.${product.id}.hours` });
+    const businessHours = await pluginStore().get({ key: 'businessHours' });
+
+    if (productHours && productHours.source === 'business') {
+        return {
+            ...product,
+            hours: {
+                source: productHours.source,
+                open: JSON.stringify(businessHours.open),
+                closed: JSON.stringify(businessHours.closed),
+            }
+        }
+    }
+    else if (productHours && productHours.source === 'custom') {
+        return {
+            ...product,
+            hours: {
+                source: productHours.source,
+                open: JSON.stringify(productHours.hours),
+                closed: JSON.stringify(null),
+            }
+        }
+    }
+    else if (productHours && productHours.source === 'categories') {
+        return {
+            ...product,
+            hours: {
+                source: productHours.source,
+                open: JSON.stringify(productHours.hours),
+                closed: JSON.stringify(null),
+            }
+        }
+    }
+    else {
+        return {
+            ...product,
+            hours: {
+                source: 'none',
+                open: JSON.stringify(null),
+                closed: JSON.stringify(null),
+            }
+        }
+    }
+}
+
+const populatedSanitizedCategory = async ({ id, pickUpTime }) => {
+
     const plugin = strapi.plugins[pluginId];
     const entity = await strapi.query('category', pluginId).findOne({ id });
     let sanitizedCategory = sanitizeEntity(entity, { model: plugin.models.category });
 
+    //add weekly hours to the products
     sanitizedCategory = await addCategoryHours(sanitizedCategory);
 
+    //Populate each product 
     const categoryProducts = sanitizedCategory.products;
     const populatedCategoryProducts = await Promise.all(categoryProducts.map(async (product) => {
         const newProduct = await populatedSanitizedProduct(product.id);
         return newProduct;
     }))
 
+    const subCategories = sanitizedCategory.subCategories;
+    const newSubCategories = await Promise.all(subCategories.map(async subCategory => {
+        const newSubCategory = subCategory;
+        newSubCategory.products = await Promise.all(subCategory.products.map(async product => {
+            const newProduct = await populatedSanitizedProduct({ id: product.id, pickUpTime });
+            return newProduct;
+        }))
+        return newSubCategory;
+    }))
 
-    return { ...sanitizedCategory, products: populatedCategoryProducts };
+
+    sanitizedCategory.isOpenForPickUp = isOpenForPickUp({ pickUpTime, hours: sanitizedCategory.hours });
+    sanitizedCategory.subCategories = newSubCategories;
+    sanitizedCategory.products = populatedCategoryProducts;
+
+    return sanitizedCategory;
 
 }
 
-const populatedSanitizedProduct = async (id) => {
+const populatedSanitizedProduct = async ({ id, pickUpTime }) => {
     const plugin = strapi.plugins[pluginId];
     const entity = await strapi.query('product', pluginId).findOne({ id });
     const sanitizedProduct = sanitizeEntity(entity, { model: plugin.models.product });
+    //populate product
     const productCategories = sanitizedProduct.categories;
     const populatedProductCategories = await Promise.all(productCategories.map(async (productCategory) => {
         const updatedCategoryHour = await addCategoryHours(productCategory);
         return updatedCategoryHour;
     }));
 
-    const product = { ...sanitizedProduct, categories: populatedProductCategories }
+    let product = { ...sanitizedProduct, categories: populatedProductCategories }
+    product = await addProductHours(product);
+
+
+    //calc isOpenForPickUp from categories
+    let productOpenForPickUp = false;
+
+    if (product.hours.source === 'categories') {
+        product.categories.forEach(async (category) => {
+            productOpenForPickUp = productOpenForPickUp || isOpenForPickUp({ hours: category.hours, pickUpTime: '2020-11-08 15:00' });
+        });
+    }
+    else {
+        productOpenForPickUp = isOpenForPickUp({ hours: product.hours, pickUpTime });
+    }
+
+
+    product.isOpenForPickUp = productOpenForPickUp;
+
+
     return product;
 }
 
@@ -92,6 +198,7 @@ const populatedSanitizedSideProduct = async (id) => {
     }))
     return { ...sanitizedSideProduct, products: populatedProducts }
 }
+
 
 const validateWeeklyHours = (businessHours) => {
     const isDayHoursValid = (dayHours) => {
@@ -170,6 +277,8 @@ const validateWeeklyHours = (businessHours) => {
 
 }
 
+
+
 module.exports = {
     pluginStore,
     addCategoryHours,
@@ -177,4 +286,5 @@ module.exports = {
     populatedSanitizedProduct,
     populatedSanitizedSideProduct,
     populatedSanitizedCategory,
+    addProductHours
 }

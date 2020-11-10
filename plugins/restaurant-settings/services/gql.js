@@ -11,6 +11,8 @@ type restaurantSettingsProduct {
     description: String
     sideProducts(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsSideProduct]
     categories(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsCategory]
+    isOpenForPickUp: Boolean
+    hours: weeklyHours
 }
 
 type restaurantSettingsSideProduct {
@@ -32,10 +34,13 @@ type restaurantSettingsCategory {
     createdAt: DateTime!
     updatedAt: DateTime!
     name: String
+    title:String
     description: String
     createCategoryPage: Boolean
     products(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsProduct]
     hours:weeklyHours
+    subCategories: [componentSubCategory]
+    isOpenForPickUp: Boolean
 }
 `;
 
@@ -44,6 +49,13 @@ type weeklyHours{
     open:JSON
     closed:JSON
     source: String
+}
+
+type componentSubCategory{
+    id: ID!
+    title: String
+    products(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsProduct]
+
 }
 `;
 

@@ -5,11 +5,15 @@ module.exports = {
     getCategories: async (ctx) => {
         const plugin = strapi.plugins[pluginId];
         const entity = await strapi.query("category", pluginId).find();
+        const query = ctx.query;
 
         let sanitizedTimedCategories = sanitizeEntity(entity, { model: plugin.models.category });
 
         sanitizedTimedCategories = await Promise.all(sanitizedTimedCategories.map(async (timedCategory) => {
-            const updatedCategoryHour = await plugin.services.functions.populatedSanitizedCategory(timedCategory.id);
+            const updatedCategoryHour = await plugin.services.functions.populatedSanitizedCategory({
+                id: timedCategory.id,
+                pickUpTime: Number(query.pickUpTime),
+            });
             return updatedCategoryHour;
 
         }));
@@ -18,12 +22,13 @@ module.exports = {
     },
     getCategory: async (ctx) => {
         const { id } = ctx.params;
+        const query = ctx.query;
         const plugin = strapi.plugins[pluginId];
-        const entity = await strapi.query("category", pluginId).findOne({ id });
 
-        let sanitizedTimedCategory = sanitizeEntity(entity, { model: plugin.models.category });
-        sanitizedTimedCategory = await plugin.services.functions.addCategoryHours(sanitizedTimedCategory);
-
+        const sanitizedTimedCategory = await plugin.services.functions.populatedSanitizedCategory({
+            id,
+            pickUpTime: Number(query.pickUpTime),
+        })
 
         return sanitizedTimedCategory
     },

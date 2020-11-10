@@ -6,10 +6,12 @@ import pluginId from '../../pluginId';
 const HomePage = () => {
     return (
         <div>
-            <p>Happy coding</p>
+            <p>Home page</p>
             <a href={`/plugins/${pluginId}/business-hours`}>Business Hours</a>
             <br />
             <a href={`/plugins/${pluginId}/categories`}>Categories Hours</a>
+            <br />
+            <a href={`/plugins/${pluginId}/products`}>Products Hours</a>
         </div>
     );
 };

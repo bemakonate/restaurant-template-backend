@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_testing_sub_categories",
+  "info": {
+    "name": "subCategory",
+    "icon": "equals",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "products": {
+      "plugin": "restaurant-settings",
+      "collection": "product"
+    },
+    "title": {
+      "type": "string"
+    }
+  }
+}

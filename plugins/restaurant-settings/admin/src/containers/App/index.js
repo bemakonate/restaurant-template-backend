@@ -15,6 +15,8 @@ import HomePage from '../HomePage';
 import BusinessHoursPage from '../BusinessHoursPage'
 import CategoriesPage from '../CategoriesPage'
 import CategoryPage from '../CategoriesPage/CategoryPage';
+import ProductsPage from '../ProductsPage';
+import ProductPage from '../ProductsPage/ProductPage';
 
 const App = () => {
   return (
@@ -23,6 +25,8 @@ const App = () => {
         <Route path={`/plugins/${pluginId}/business-hours`} component={BusinessHoursPage} exact />
         <Route path={`/plugins/${pluginId}/categories/:id`} component={CategoryPage} exact />
         <Route path={`/plugins/${pluginId}/categories`} component={CategoriesPage} exact />
+        <Route path={`/plugins/${pluginId}/products/:id`} component={ProductPage} exact />
+        <Route path={`/plugins/${pluginId}/products`} component={ProductsPage} exact />
         <Route path={`/plugins/${pluginId}`} component={HomePage} exact />
         <Route component={NotFound} />
       </Switch>

@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@buffetjs/core": "^3.3.1",
+    "axios": "^0.21.0",
+    "moment-business-time": "^1.1.0",
     "moment-timezone": "^0.5.31",
     "order-id": "^2.1.0",
     "stripe": "^8.118.0"

@@ -10,12 +10,12 @@ module.exports = {
     ${graphqlTypes}
   `,
   query: `
-    restaurantProducts: [restaurantSettingsProduct!]
-    restaurantProduct(id: ID): restaurantSettingsProduct!
+    restaurantProducts(pickUpTime: String): [restaurantSettingsProduct!]
+    restaurantProduct(id: ID,pickUpTime: String): restaurantSettingsProduct!
     restaurantSideProducts: [restaurantSettingsSideProduct!]
     restaurantSideProduct(id: ID): restaurantSettingsSideProduct!
-    restaurantCategories: [restaurantSettingsCategory!]
-    restaurantCategory(id: ID): restaurantSettingsCategory!
+    restaurantCategories(pickUpTime: String): [restaurantSettingsCategory!]
+    restaurantCategory(id: ID, pickUpTime: String): restaurantSettingsCategory!
     restaurantBusinessHours: weeklyHours!
 
 
@@ -49,7 +49,7 @@ module.exports = {
         },
         restaurantBusinessHours:{
             description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.business-hours.getBusinessHours',     
+            resolver: 'plugins::restaurant-settings.business-hours.getBusinessHours', 
         }
   }
 }
