@@ -28,6 +28,30 @@
     },
     {
       "method": "GET",
+      "path": "/business-hours/open-pickups",
+      "handler": "business-hours.getOpenPickUps",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/business-hours/is-pickup-valid",
+      "handler": "business-hours.getIsPickUpTimeValid",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/business-hours/next-open-pickup",
+      "handler": "business-hours.getNextOpenPickUp",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/categories",
       "handler": "categories.getCategories",
       "config": {

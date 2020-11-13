@@ -41,7 +41,7 @@ const ProductsPage = (props) => {
             return {
                 id: product.id,
                 name: product.name,
-                // hours: product.hours.source,
+                hours: product.hours.source,
             }
         })
 

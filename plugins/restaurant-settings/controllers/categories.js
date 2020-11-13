@@ -12,7 +12,7 @@ module.exports = {
         sanitizedTimedCategories = await Promise.all(sanitizedTimedCategories.map(async (timedCategory) => {
             const updatedCategoryHour = await plugin.services.functions.populatedSanitizedCategory({
                 id: timedCategory.id,
-                pickUpTime: Number(query.pickUpTime),
+                pickUpTime: Number(query._pickUpTime),
             });
             return updatedCategoryHour;
 
@@ -27,7 +27,7 @@ module.exports = {
 
         const sanitizedTimedCategory = await plugin.services.functions.populatedSanitizedCategory({
             id,
-            pickUpTime: Number(query.pickUpTime),
+            pickUpTime: Number(query._pickUpTime),
         })
 
         return sanitizedTimedCategory

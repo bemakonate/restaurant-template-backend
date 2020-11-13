@@ -1,4 +1,5 @@
 const { arrayEquals, validateHhMm } = require('./helpers');
+const { currentPossiblePickups, getOnlyPickUps } = require('./pickUp');
 const pluginId = require("../admin/src/pluginId");
 const { sanitizeEntity } = require('strapi-utils');
 const moment = require('moment-business-time');
@@ -8,9 +9,20 @@ const pluginStore = () => strapi.store({
     type: 'plugin',
     name: 'bemak-restaurant-settings'
 })
+const defaultWorkingHours = () => {
+    return {
+        0: null,
+        1: null,
+        2: null,
+        3: null,
+        4: null,
+        5: null,
+        6: null
+    }
+}
 
 const isOpenForPickUp = ({ pickUpTime, hours }) => {
-    const defaultWorkingHours = {
+    const defaultWorkingHoursVar = {
         0: null,
         1: null,
         2: null,
@@ -21,13 +33,13 @@ const isOpenForPickUp = ({ pickUpTime, hours }) => {
     }
     //1.define a moment locale for category hours
     const momentLocale = moment.updateLocale('en', {
-        workinghours: JSON.parse(hours.open) || defaultWorkingHours,
+        workinghours: JSON.parse(hours.open) || defaultWorkingHoursVar,
         holidays: JSON.parse(hours.closed),
     });
 
     //2.check to see if the category is available for pickupTime
 
-    const momentPickUpTime = moment(new Date(pickUpTime));
+    const momentPickUpTime = moment(pickUpTime || new Date().getTime());
     const isOpenForPickUp = momentPickUpTime.isWorkingTime();
 
     return isOpenForPickUp;
@@ -94,11 +106,11 @@ const addProductHours = async (product) => {
             }
         }
     }
-    else if (productHours && productHours.source === 'categories') {
+    else if (productHours && productHours.source === 'none') {
         return {
             ...product,
             hours: {
-                source: productHours.source,
+                source: 'none',
                 open: JSON.stringify(productHours.hours),
                 closed: JSON.stringify(null),
             }
@@ -108,7 +120,7 @@ const addProductHours = async (product) => {
         return {
             ...product,
             hours: {
-                source: 'none',
+                source: 'categories',
                 open: JSON.stringify(null),
                 closed: JSON.stringify(null),
             }
@@ -122,15 +134,20 @@ const populatedSanitizedCategory = async ({ id, pickUpTime }) => {
     const entity = await strapi.query('category', pluginId).findOne({ id });
     let sanitizedCategory = sanitizeEntity(entity, { model: plugin.models.category });
 
+
+
     //add weekly hours to the products
     sanitizedCategory = await addCategoryHours(sanitizedCategory);
 
     //Populate each product 
     const categoryProducts = sanitizedCategory.products;
+
+
     const populatedCategoryProducts = await Promise.all(categoryProducts.map(async (product) => {
-        const newProduct = await populatedSanitizedProduct(product.id);
+        const newProduct = await populatedSanitizedProduct({ id: product.id, pickUpTime });
         return newProduct;
     }))
+
 
     const subCategories = sanitizedCategory.subCategories;
     const newSubCategories = await Promise.all(subCategories.map(async subCategory => {
@@ -171,7 +188,7 @@ const populatedSanitizedProduct = async ({ id, pickUpTime }) => {
 
     if (product.hours.source === 'categories') {
         product.categories.forEach(async (category) => {
-            productOpenForPickUp = productOpenForPickUp || isOpenForPickUp({ hours: category.hours, pickUpTime: '2020-11-08 15:00' });
+            productOpenForPickUp = productOpenForPickUp || isOpenForPickUp({ hours: category.hours, pickUpTime });
         });
     }
     else {
@@ -286,5 +303,8 @@ module.exports = {
     populatedSanitizedProduct,
     populatedSanitizedSideProduct,
     populatedSanitizedCategory,
-    addProductHours
+    addProductHours,
+    currentPossiblePickups,
+    defaultWorkingHours,
+    getOnlyPickUps,
 }
