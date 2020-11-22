@@ -124,18 +124,26 @@ const currentPossiblePickups = ({ currentOrderingDateMs, maxOrderingDateMs, work
             })
         }
     })
+
+    for (const dateStr in pickupDates) {
+        if (pickupDates[dateStr].length <= 0) {
+            delete pickupDates[dateStr];
+        }
+    }
     return pickupDates;
 }
 
 const getOnlyPickUps = (openPickUps) => {
-
     const allFuturePickUps = [];
 
     for (const dayValue in openPickUps) {
         const dayOpenPickUps = openPickUps[dayValue];
-        dayOpenPickUps.forEach(pickUpConfig => {
-            allFuturePickUps.push(pickUpConfig);
-        })
+        if (dayOpenPickUps.length > 0) {
+            dayOpenPickUps.forEach(pickUpConfig => {
+                allFuturePickUps.push(pickUpConfig);
+            })
+        }
+
     }
     return allFuturePickUps;
 }

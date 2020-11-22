@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_testing_variants",
+  "info": {
+    "name": "variant",
+    "icon": "ad"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    }
+  }
+}

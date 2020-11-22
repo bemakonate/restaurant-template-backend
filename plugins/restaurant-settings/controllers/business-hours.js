@@ -77,7 +77,10 @@ module.exports = {
         const openPickUps = plugin.services.functions.currentPossiblePickups({ currentOrderingDateMs, maxOrderingDateMs, workingHours, minWaitingTime, pickupInterval });
 
 
-        return openPickUps;
+        return {
+            openPickUps: Object.keys(openPickUps).length > 0 ? openPickUps : null,
+        };
+
     },
     getIsPickUpTimeValid: async (ctx) => {
         const plugin = strapi.plugins[pluginId];
@@ -87,7 +90,7 @@ module.exports = {
             ctx.throw(400, "You must pass _pickUpTime as a query")
         }
 
-        const openPickUps = await plugin.controllers['business-hours'].getOpenPickUps(ctx);
+        const { openPickUps } = await plugin.controllers['business-hours'].getOpenPickUps(ctx);
         const allFuturePickUps = plugin.services.functions.getOnlyPickUps(openPickUps);
         const foundPickUpTime = allFuturePickUps.find(pickUpConfig => pickUpConfig.pickUpTime === Number(_pickUpTime))
 
@@ -98,10 +101,12 @@ module.exports = {
     },
     getNextOpenPickUp: async (ctx) => {
         const plugin = strapi.plugins[pluginId];
-        const openPickUps = await plugin.controllers['business-hours'].getOpenPickUps(ctx);
+        const { openPickUps } = await plugin.controllers['business-hours'].getOpenPickUps(ctx);
         const allFuturePickUps = plugin.services.functions.getOnlyPickUps(openPickUps);
 
-        return allFuturePickUps.length > 0 ? allFuturePickUps[0] : null;
+        return {
+            nextPickUp: allFuturePickUps.length > 0 ? allFuturePickUps[0] : null,
+        };
 
     }
 }
