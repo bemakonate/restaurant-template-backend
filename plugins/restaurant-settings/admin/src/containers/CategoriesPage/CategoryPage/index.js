@@ -71,7 +71,7 @@ const CategoryPage = (props) => {
             const res = await request(`/${pluginId}/categories/${id}`, {
                 method: "POST",
                 body: {
-                    hours: timedCategoryHours,
+                    hours: { open: timedCategoryHours, closed: null },
                     source: timedCategorySource,
                 }
             });

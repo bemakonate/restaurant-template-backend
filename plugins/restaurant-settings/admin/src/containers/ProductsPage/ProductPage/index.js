@@ -73,7 +73,7 @@ const CategoryPage = (props) => {
             const res = await request(`/${pluginId}/products/${id}`, {
                 method: "POST",
                 body: {
-                    hours: productHours,
+                    hours: { open: productHours, closed: null },
                     source: productSource,
                 }
             });

@@ -4,11 +4,14 @@ const { sanitizeEntity } = require('strapi-utils');
 module.exports = {
     getSideProducts: async (ctx) => {
         const plugin = strapi.plugins[pluginId];
+
+        //Get all side products from plugin. Make sure we don't expose sensitive information
         const entity = await strapi.query("side-product", pluginId).find();
         let sanitizedEntity = sanitizeEntity(entity, { model: plugin.models['side-product'] });
 
+        //Loop through each side product and populate each side product
         sanitizedEntity = await Promise.all(sanitizedEntity.map(async (sideProduct) => {
-            const newSideProduct = await plugin.services.functions.populatedSanitizedSideProduct(sideProduct.id);
+            const newSideProduct = await plugin.services.populate.populatedSanitizedSideProduct({ id: sideProduct.id });
             return newSideProduct;
 
         }));
@@ -18,6 +21,7 @@ module.exports = {
     },
     getSideProduct: async (ctx) => {
         const { id } = ctx.params;
+        const plugin = strapi.plugins[pluginId];
         //---------convert into middleware-------
         const entity = await strapi.query("side-product", pluginId).findOne({ id });
         if (!entity) {
@@ -25,10 +29,7 @@ module.exports = {
         }
         //-------------------------
 
-        const plugin = strapi.plugins[pluginId];
-        const sanitizedProduct = plugin.services.functions.populatedSanitizedSideProduct(id);
-
-        return sanitizedProduct;
-
+        const sanitizedSideProduct = plugin.services.populate.populatedSanitizedSideProduct({ id });
+        return sanitizedSideProduct;
     },
 }

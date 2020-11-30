@@ -2,14 +2,6 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/menu",
-      "handler": "restaurant-menu.index",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
       "path": "/business-hours",
       "handler": "business-hours.getBusinessHours",
       "config": {
