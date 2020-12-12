@@ -25,6 +25,7 @@ module.exports = {
 
         //We want to return the business hours in json format b/c of graphql 
         return {
+            source: 'custom',
             open: businessHours ? businessHours.open : JSON.stringify(pluginFunctions.defaultWorkingHours()),
             closed: businessHours ? businessHours.closed : JSON.stringify(null),
         };

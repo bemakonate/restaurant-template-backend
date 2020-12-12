@@ -13,10 +13,12 @@ module.exports = {
         let reciptCart = []; //Because stripe wants less than 500 char
 
         const plugin = strapi.plugins[pluginId];
-        const pluginStore = plugin.services.functions.pluginStore();
+        const pluginStore = plugin.services.index.pluginStore();
 
         const { stripePKSecret } = await pluginStore.get({ key: 'secrets' })
         const stripe = uninitializedStripe(stripePKSecret);
+
+
 
         const validatedCart = await plugin.services.cart.validateCart({
             cart,
@@ -61,7 +63,7 @@ module.exports = {
 
 
         const plugin = strapi.plugins[pluginId];
-        const pluginStore = plugin.services.functions.pluginStore();
+        const pluginStore = plugin.services.index.pluginStore();
 
         const { stripePKSecret } = await pluginStore.get({ key: 'secrets' })
         const stripe = uninitializedStripe(stripePKSecret);

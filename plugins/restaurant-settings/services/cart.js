@@ -37,17 +37,15 @@ const cartTotal = (cart) => {
     return total;
 }
 
-const validateCart = async ({ cart, cartItemCb }) => {
+const validateCart = async ({ cart, cartItemCb, pickUpTime = Date.now() }) => {
     let validatedCart = [];
+    const plugin = strapi.plugins[pluginId];
 
     await Promise.all(cart.map(async (cartItem) => {
-
-        const validatedProduct = await strapi.query('product', pluginId).findOne({
-            id: cartItem.productId,
-        })
+        const validatedProduct = await plugin.services.populate.populatedSanitizedProduct({ id: cartItem.productId, pickUpTime });
         const validatedSideProducts = [];
 
-        if (validatedProduct) {
+        if (validatedProduct && cartItem.selectedSideProducts) {
             await Promise.all(cartItem.selectedSideProducts.map(async (selectedSideProduct) => {
                 const validatedSideProduct = validatedProduct.sideProducts.find(sideProduct => sideProduct.id.toString() === selectedSideProduct.toString());
                 if (validatedSideProduct) {
@@ -68,6 +66,7 @@ const validateCart = async ({ cart, cartItemCb }) => {
         })
         return null;
     }))
+
 
     return validatedCart;
 }

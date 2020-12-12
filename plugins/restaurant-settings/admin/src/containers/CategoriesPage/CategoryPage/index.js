@@ -5,7 +5,7 @@ import pluginId from '../../../pluginId';
 import { compare } from '../../../utils/helpers';
 import { InputText, Button, Padded, Label, Textarea } from '@buffetjs/core';
 import { request } from 'strapi-helper-plugin'
-
+import EntityAvailability from '../../../components/EntityAvailability';
 import { useParams, useHistory } from 'react-router-dom';
 import classes from './CategoryPage.module.css';
 
@@ -14,83 +14,84 @@ import classes from './CategoryPage.module.css';
 const CategoryPage = (props) => {
     const { id } = useParams();
 
-    const [submitWeeklyHours, setSubmitWeeklyHours] = useState(false);
-    const [timedCategory, setTimedCategory] = useState(null);
-    const [fetchingTimedCategory, setFetchingTimedCategory] = useState(null);
-    const [timedCategorySource, setTimedCategorySource] = useState(null);
-    const [timedCategoryHours, setTimedCategoryHours] = useState(null);
-    const [updateTimeCategory, setUpdateTimeCategory] = useState(false);
-    const [currentWeeklyHours, setCurrentWeeklyHours] = useState(null);
-    const [isChangesSaved, isSetChangesSaved] = useState(null);
 
+    const [category, setCategory] = useState(null);
+    const [fetchingCategory, setFetchingCategory] = useState(null);
+    const [isChangesSaved, setIsChangesSaved] = useState(null);
+    const [categoryCurrentAvail, setCategoryCurrentAvail] = useState(null);
 
 
 
     useEffect(() => {
-        if (!fetchingTimedCategory && timedCategorySource === 'custom' && !compare(JSON.parse(timedCategory.hours.open), currentWeeklyHours)) {
-            isSetChangesSaved(false);
-        }
-        else if (!fetchingTimedCategory && timedCategory && timedCategorySource !== timedCategory.hours.source) {
-            isSetChangesSaved(false);
-        }
-        else {
-            isSetChangesSaved(true);
+        if (!fetchingCategory && categoryCurrentAvail) {
+            if (categoryCurrentAvail.data.source !== category.hours.source) {
+                setIsChangesSaved(false);
+            }
+            else if (categoryCurrentAvail.data.source === 'custom' && !compare(JSON.parse(category.hours.open), categoryCurrentAvail.data.open)) {
+                setIsChangesSaved(false);
+            }
+            else {
+                setIsChangesSaved(true);
+            }
+        } else {
+            setIsChangesSaved(true);
         }
 
-    }, [currentWeeklyHours, timedCategorySource, fetchingTimedCategory])
+
+    }, [fetchingCategory, categoryCurrentAvail])
 
     useEffect(() => {
-        const run = async () => await getTimeCategoryData();
+        const run = async () => await getCategory();
         run();
     }, [])
 
-    useEffect(() => {
-        const run = async () => updateTimeCategory && await updateTimeCategoryData();
-        run();
-    }, [updateTimeCategory])
 
 
-    const getTimeCategoryData = async () => {
-        setFetchingTimedCategory(true);
+
+    const getCategory = async () => {
+        setFetchingCategory(true);
         try {
             const category = await request(`/${pluginId}/categories/${id}`, { method: "GET" });
-            setTimedCategory(category);
-            setTimedCategoryHours(JSON.parse(category.hours.open));
-            setTimedCategorySource(category.hours.source);
-            setFetchingTimedCategory(false);
+            setCategory(category);
+            setFetchingCategory(false);
         } catch (error) {
             strapi.notification.error(error.message);
-            setFetchingTimedCategory(false);
+            setFetchingCategory(false);
             props.history.push(`/plugins/${pluginId}/404`);
 
         }
     }
 
-    const updateTimeCategoryData = async () => {
+    const updateCategoryData = async ({ source, open, closed }) => {
         try {
             const res = await request(`/${pluginId}/categories/${id}`, {
                 method: "POST",
                 body: {
-                    hours: { open: timedCategoryHours, closed: null },
-                    source: timedCategorySource,
+                    hours: { open, closed },
+                    source,
                 }
             });
             strapi.notification.success("success");
-            setUpdateTimeCategory(false);
-            getTimeCategoryData();
+            getCategory();
         } catch (error) {
             strapi.notification.error(error.message);
-            setUpdateTimeCategory(false);
         }
     }
 
     const saveBtnClicked = () => {
-        if (timedCategorySource === 'custom') {
-            setSubmitWeeklyHours(true);
-        } else {
-            setUpdateTimeCategory(true);
+        if (categoryCurrentAvail.error) {
+            alert(categoryCurrentAvail.error.message);
+            return null;
         }
+
+
+        updateCategoryData({
+            source: categoryCurrentAvail.data.source,
+            open: categoryCurrentAvail.data.open,
+            closed: categoryCurrentAvail.data.closed,
+        })
     }
+
 
     const goBackBtnClicked = () => {
         if (!isChangesSaved) {
@@ -103,51 +104,6 @@ const CategoryPage = (props) => {
         }
     }
 
-    const afterWeeklyHoursSubmit = async ({ isWeeklyHoursValid, frontendWeeklyHours, momentWeeklyHours, daysOpen, error }) => {
-        setSubmitWeeklyHours(false);
-        if (error) {
-            alert(error.message);
-            return null;
-        }
-
-        setTimedCategoryHours(momentWeeklyHours);
-        setUpdateTimeCategory(true);
-    }
-
-
-    //==========RENDER=============
-    let categoryHoursJSX = null;
-
-    switch (timedCategorySource) {
-        case 'custom':
-            categoryHoursJSX = null;
-            const resetValue = JSON.parse(timedCategory.hours.open);
-            if (!fetchingTimedCategory) {
-                categoryHoursJSX = (
-                    <div>
-                        <EnhancedWeeklyHours
-                            originWeeklyHours={timedCategoryHours}
-                            getCurrentMomentWeeklyHours={(weeklyHours) => setCurrentWeeklyHours(weeklyHours)}
-                            resetValue={resetValue}
-                            forceSubmit={submitWeeklyHours}
-                            afterSubmit={afterWeeklyHoursSubmit} />
-                    </div>
-                );
-            }
-            break;
-        case 'business':
-            categoryHoursJSX = <p>This category will available all business hours</p>
-            break;
-        default:
-            categoryHoursJSX = <p>There is no restricted hours in this category</p>
-    }
-
-
-    const SourceOption = (props) => {
-        return <li
-            onClick={() => setTimedCategorySource(props.value)}
-            className={timedCategorySource === props.value ? classes.ActiveHours : ''}>{props.children}</li>
-    }
     return (
         <div>
             {/* Save Buttons */}
@@ -157,13 +113,12 @@ const CategoryPage = (props) => {
             </div>
 
 
-
-            <ul>
-                <SourceOption value="custom">Custom Hours</SourceOption>
-                <SourceOption value="business">Business Hours</SourceOption>
-                <SourceOption value="none">None</SourceOption>
-            </ul>
-            {categoryHoursJSX}
+            {category && <EntityAvailability
+                open={JSON.parse(category.hours.open)}
+                source={category.hours.source}
+                getEntityAvailability={(data) => setCategoryCurrentAvail(data)}
+                limitSources={['business', 'none', 'custom']}
+            />}
 
 
         </div>

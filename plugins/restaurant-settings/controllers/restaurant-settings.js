@@ -17,7 +17,7 @@ module.exports = {
 
   setSecrets: async (ctx) => {
     const plugin = strapi.plugins[pluginId];
-    const pluginStore = plugin.services.functions.pluginStore();
+    const pluginStore = plugin.services.index.pluginStore();
 
 
     const { stripePKSecret, orderIdSecret } = ctx.request.body;

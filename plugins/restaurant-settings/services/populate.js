@@ -32,6 +32,16 @@ const populateWorkingHours = async ({ source, workingHours, entity, type }) => {
             }
         }
     }
+    else if (workingHours && source === 'none') {
+        return {
+            ...entity,
+            hours: {
+                source: 'none',
+                open: JSON.stringify(null),
+                closed: JSON.stringify(null),
+            }
+        }
+    }
     //If not any source above, but is a product. The default value should be a category
     else if (type === 'product') {
         return {

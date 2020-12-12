@@ -13,7 +13,7 @@ const SlotHours = (props) => {
                 <TimeField
                     label="Start"
                     defaultValue={props.slot ? props.slot[0] : ''}
-                    forceValidationStyle={context.isSubmitBtnClicked && context.daysOpen.includes(props.dayIndex)}
+                    forceValidationStyle={context.daysOpen.includes(props.dayIndex)}
                     getValue={(value) => props.slot && props.updateSlot({
                         dayIndex: props.dayIndex,
                         slotIndex: props.slotIndex,
@@ -26,8 +26,7 @@ const SlotHours = (props) => {
                 <TimeField
                     label="End"
                     defaultValue={props.slot ? props.slot[1] : ''}
-                    forceValidationStyle={context.isSubmitBtnClicked}
-                    forceValidationStyle={context.isSubmitBtnClicked && context.daysOpen.includes(props.dayIndex)}
+                    forceValidationStyle={context.daysOpen.includes(props.dayIndex)}
                     getValue={(value) => props.slot && props.updateSlot({
                         dayIndex: props.dayIndex,
                         slotIndex: props.slotIndex,

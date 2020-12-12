@@ -3,7 +3,8 @@ import {
     isWeeklyHoursValid,
     getMomentWeeklyHours,
     validateBusinessHours as validateMomentWeeklyHours,
-    momentToFrontendWeeklyHours
+    momentToFrontendWeeklyHours,
+    compare
 } from './helpers';
 import { daysOfTheWeek } from './constants';
 import classes from './WeeklyHours.module.css';
@@ -41,24 +42,28 @@ const WeeklyHours = (props) => {
     const [daysOpen, setDaysOpen] = useState(null);
     const [weekdayHrs, setWeekdayHrs] = useState(null);
     const [isSubmitBtnClicked, setIsSubmitBtnClicked] = useState(false);
+    const [originWeeklyHours, setOriginWeeklyHours] = useState(defaultWeek);
 
 
     const weekdayHrsJSX = [];
 
 
     useEffect(() => {
-        const newWeekdayHrs = momentToFrontendWeeklyHours(props.originWeeklyHours ? props.originWeeklyHours : defaultWeek);
-        setDaysOpen(newWeekdayHrs.daysOpen);
-        setWeekdayHrs(newWeekdayHrs.frontendHours);
+        if (!compare(originWeeklyHours, props.originWeeklyHours)) {
+            const newWeekdayHrs = momentToFrontendWeeklyHours(props.originWeeklyHours ? props.originWeeklyHours : defaultWeek);
+            setDaysOpen(newWeekdayHrs.daysOpen);
+            setWeekdayHrs(newWeekdayHrs.frontendHours);
+            setOriginWeeklyHours(props.originWeeklyHours);
+        }
     }, [props.originWeeklyHours])
 
-    useEffect(() => props.getCurrentWeeklyHours && props.getCurrentWeeklyHours(weekdayHrs), [weekdayHrs])
+
     useEffect(() => {
-        const momentWeeklyHours = getMomentWeeklyHours({ weeklyHours: weekdayHrs, daysOpen });
-        props.getCurrentMomentWeeklyHours && props.getCurrentMomentWeeklyHours(momentWeeklyHours);
-    }, [weekdayHrs, daysOpen]);
-    useEffect(() => props.getCurrentDaysOpen && props.getCurrentDaysOpen(daysOpen), [daysOpen])
-    useEffect(() => { props.forceSubmit && formSubmitted() }, [props.forceSubmit]);
+        const isWeeklyHoursValid = getIsWeeklyHoursValid();
+        props.getWeeklyHoursStatus && props.getWeeklyHoursStatus(isWeeklyHoursValid);
+    }, [weekdayHrs, daysOpen, props.originWeeklyHours]);
+
+
 
     const dayOpenChanged = (e) => {
         const newDaysOpen = [...daysOpen];
@@ -95,11 +100,10 @@ const WeeklyHours = (props) => {
     }
     //Pass to context to the field input
 
-    const formSubmitted = () => {
-        setIsSubmitBtnClicked(true);
-
+    const getIsWeeklyHoursValid = () => {
         let weeklyFrontendHoursValid = isWeeklyHoursValid({ weeklyHours: weekdayHrs, daysOpen });
         const momentWeeklyHours = getMomentWeeklyHours({ weeklyHours: weekdayHrs, daysOpen });
+
 
 
         //make default different from key
@@ -111,17 +115,17 @@ const WeeklyHours = (props) => {
             momentWeeklyHours = momentWeeklyHours2,
             daysOpen = daysOpen2,
             error = null
-        }) =>
-            props.afterSubmit && props.afterSubmit({
+        }) => {
+            return {
                 isWeeklyHoursValid,
                 frontendWeeklyHours,
                 momentWeeklyHours,
                 daysOpen,
                 error,
-            })
+            }
+        }
 
-
-        if (!daysOpen.length) {
+        if (daysOpen && !daysOpen.length) {
             return afterSubmit({
                 isWeeklyHoursValid: false,
                 error: {
@@ -155,22 +159,36 @@ const WeeklyHours = (props) => {
                     message: "You have entered a wrong value"
                 },
             })
-
         }
-
     }
 
 
-
     if (weekdayHrs) {
+
         for (const dayValue in weekdayHrs) {
             const day = daysOfTheWeek.find(day => day.value == dayValue);
             const isOpen = daysOpen.includes(day.value);
+            const dayHoursClasses = [classes.DayContainer]
+
+            //Show the warning style for day time inputs
+            const allofDaySingleTimeValues = [];
+            weekdayHrs[dayValue].forEach(rows => {
+                allofDaySingleTimeValues.push(...rows);
+            })
+
+
+            let timeValueEntered = false;
+            allofDaySingleTimeValues.forEach(singleTimeValue => {
+                timeValueEntered = timeValueEntered || singleTimeValue.length > 0;
+            })
+
+            const showWarning = timeValueEntered && !isOpen;
+            showWarning && dayHoursClasses.push(classes.DayContainerWarning);
+
             const dayHrsJSX = (
-                <div key={day.value} className={classes.DayContainer}>
+                <div key={day.value} className={dayHoursClasses.join(' ')}>
                     <label htmlFor="">{day.name}</label>
                     <input type="checkbox" value={day.value} onChange={(e) => dayOpenChanged(e)} checked={isOpen} />
-
 
                     <DayHours
                         slots={weekdayHrs[dayValue]}
@@ -191,10 +209,11 @@ const WeeklyHours = (props) => {
                 isSubmitBtnClicked,
                 daysOpen,
             }}>
-                {weekdayHrsJSX}
-            </WeekdayHoursContext.Provider>
+                <div>
+                    {weekdayHrsJSX}
+                </div>
 
-            {!props.hideComponentSubmit && <button onClick={formSubmitted}>Submit</button>}
+            </WeekdayHoursContext.Provider>
 
         </div>
 

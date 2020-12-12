@@ -6,6 +6,8 @@ const DayHours = (props) => {
 
     if (props.slots && props.slots.length > 0) {
 
+
+
         const slotsJSX = props.slots.map((slot, index) => {
             return <SlotHours
                 key={index}
@@ -17,8 +19,9 @@ const DayHours = (props) => {
                 hideRemove={index === 0} />
         })
 
-        return <div className={classes.BusinessSlots}>
+        return <div>
             {slotsJSX}
+
         </div>
     }
 

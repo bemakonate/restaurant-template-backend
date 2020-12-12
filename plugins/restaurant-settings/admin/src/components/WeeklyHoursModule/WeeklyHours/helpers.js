@@ -1,4 +1,5 @@
 export { validateBusinessHours } from './helpers/validateMomentBusinessHours';
+export const compare = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 //Frontend version
 export const isWeeklyHoursValid = ({ weeklyHours, daysOpen }) => {

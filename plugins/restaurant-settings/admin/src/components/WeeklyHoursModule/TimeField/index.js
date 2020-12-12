@@ -35,7 +35,8 @@ const TimeField = (props) => {
 
     return (
         <div
-            className={`${(isFieldTouched && !isFieldValid) || (props.forceValidationStyle && !isFieldValid) ? classes.TimeFieldError : ''}`}>
+            className={`${(props.waitUntilTouched && isFieldTouched && !isFieldValid) ||
+                (props.forceValidationStyle && !isFieldValid) ? classes.TimeFieldError : ''}`}>
             <label className={`${classes.TimeInputLabel}`} htmlFor="timeInput">{props.label}</label>
             <input
                 onChange={fieldChanged}

@@ -11,57 +11,56 @@ import pluginId from '../../pluginId';
 import { request } from 'strapi-helper-plugin';
 import { Button } from '@buffetjs/core';
 import { compare } from '../../utils/helpers';
-
+import EntityAvailability from '../../components/EntityAvailability';
 
 const BusinessHoursPage = (props) => {
   const [originBusinessHrs, setOriginBusinessHrs] = useState(null);
   const [fetchingBusinessHrs, setFetchingBusinessHrs] = useState(true);
-  const [currentWeeklyHours, setCurrentWeeklyHours] = useState(null);
-  const [submitWeeklyHours, setSubmitWeeklyHours] = useState(false);
   const [isChangesSaved, setIsChangesSaved] = useState(null);
+  const [businessHoursCurrentAvail, setBusinessHoursCurrentAvail] = useState(null);
 
 
   useEffect(() => {
-    const run = async () => {
-      await getBusinessHours();
-    }
-
+    const run = async () => await getBusinessHours();
     run();
   }, []);
 
+
   useEffect(() => {
-    if (!fetchingBusinessHrs && !compare(currentWeeklyHours, originBusinessHrs)) {
-      setIsChangesSaved(false)
-    }
-    else {
+    if (!fetchingBusinessHrs && businessHoursCurrentAvail) {
+      if (businessHoursCurrentAvail.data.source !== originBusinessHrs.source) {
+        setIsChangesSaved(false);
+      }
+      else if (businessHoursCurrentAvail.data.source === 'custom' && !compare(JSON.parse(originBusinessHrs.open), businessHoursCurrentAvail.data.open)) {
+        setIsChangesSaved(false);
+      }
+      else {
+        setIsChangesSaved(true);
+      }
+    } else {
       setIsChangesSaved(true);
     }
-  }, [fetchingBusinessHrs, currentWeeklyHours, originBusinessHrs])
+
+
+  }, [fetchingBusinessHrs, businessHoursCurrentAvail])
 
 
 
   const getBusinessHours = async () => {
     setFetchingBusinessHrs(true);
     const businessHours = await request(`/${pluginId}/business-hours`, { method: 'GET' });
-    setOriginBusinessHrs(JSON.parse(businessHours.open));
+    setOriginBusinessHrs(businessHours);
     setFetchingBusinessHrs(false);
   }
 
 
 
-  const afterSubmit = async ({ isWeeklyHoursValid, frontendWeeklyHours, momentWeeklyHours, daysOpen, error }) => {
-    setSubmitWeeklyHours(false);
+  const updateBusinessHours = async ({ source, open, closed }) => {
     strapi.lockApp();
-    if (error) {
-      strapi.notification.error(error.message);
-      strapi.unlockApp();
-      return null;
-    }
-
     try {
       const res = await request(`/${pluginId}/business-hours`, {
         method: 'POST',
-        body: { open: momentWeeklyHours, closed: null }
+        body: { open, closed }
       });
 
       strapi.notification.success('success');
@@ -88,7 +87,17 @@ const BusinessHoursPage = (props) => {
   }
 
   const saveBtnClicked = () => {
-    setSubmitWeeklyHours(true);
+    if (businessHoursCurrentAvail.error) {
+      alert(businessHoursCurrentAvail.error.message);
+      return null;
+    }
+
+
+    updateBusinessHours({
+      source: businessHoursCurrentAvail.data.source,
+      open: businessHoursCurrentAvail.data.open,
+      closed: businessHoursCurrentAvail.data.closed,
+    })
   }
 
   return (
@@ -98,14 +107,11 @@ const BusinessHoursPage = (props) => {
         <Button color="success" label="Save" onClick={saveBtnClicked} disabled={isChangesSaved} />
       </div>
 
-      {!fetchingBusinessHrs &&
-        <EnhancedWeeklyHours
-          originWeeklyHours={originBusinessHrs}
-          resetValue={originBusinessHrs}
-          forceSubmit={submitWeeklyHours}
-          getCurrentMomentWeeklyHours={(weeklyHours) => setCurrentWeeklyHours(weeklyHours)}
-          afterSubmit={afterSubmit} />
-      }
+      {originBusinessHrs && <EntityAvailability
+        fixedCustomHours
+        open={JSON.parse(originBusinessHrs.open)}
+        getEntityAvailability={(data) => setBusinessHoursCurrentAvail(data)}
+      />}
     </div>
   );
 };
