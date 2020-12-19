@@ -4,15 +4,16 @@ import React, { memo } from 'react';
 import pluginId from '../../pluginId';
 
 
-const HomePage = () => {
+const HomePage = (props) => {
+
     return (
         <div>
-            <p>Home page</p>
-            <a href={`/plugins/${pluginId}/business-hours`}>Business Hours</a>
-            <br />
-            <a href={`/plugins/${pluginId}/categories`}>Categories Hours</a>
-            <br />
-            <a href={`/plugins/${pluginId}/products`}>Products Hours</a>
+            <h1>Restaurant</h1>
+            <p>Advance Settings</p>
+
+            <p onClick={() => props.history.push(`/plugins/${pluginId}/business-hours`)}>Business Setting</p>
+            <p onClick={() => props.history.push(`/plugins/${pluginId}/categories`)}>Categories Setting</p>
+            <p onClick={() => props.history.push(`/plugins/${pluginId}/products`)}>Products Setting</p>
         </div>
     );
 };

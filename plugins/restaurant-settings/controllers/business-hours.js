@@ -1,20 +1,79 @@
 const pluginId = require("../admin/src/pluginId");
 const moment = require('moment-business-time');
 
-//======== WORKING HOURS EXAMPLE ==========
-//  {
-//   5: null,
-//   6: null,
-//   2: null,
-//   3: null,
-//   0: ['06:30:00', '12:00:00', '13:30:00', '17:00:00'],
-//   1: ['09:30:00', '17:00:00'],
-//   4: ['06:30:00', '12:00:00', '13:30:00', '17:00:00'],
-// };
+//=================Business Data===================
+// isAcceptingOrders (bool)
+// pickUpVariables
+//     earlyBookingMins (int)
+//     pickUpInterval (int)
+//     minWaitingTime (int)
+//     userSelectionTime (int)
+// hours
+//     open (json)
+//     closed (json)
+
 
 
 
 module.exports = {
+    getBusinessData: async (ctx) => {
+        const plugin = strapi.plugins[pluginId];
+        const pluginStore = plugin.services.index.pluginStore();
+        const pluginFunctions = plugin.services.index.pluginFunctions();
+
+        const business = await pluginStore.get({ key: 'business' });
+
+        return {
+            business: business || null,
+        };
+
+    },
+    setBusinessData: async (ctx) => {
+        const plugin = strapi.plugins[pluginId];
+        const pluginStore = plugin.services.index.pluginStore();
+        const pluginFunctions = plugin.services.index.pluginFunctions;
+
+        // 1.Get the new business data from req
+        const { isAcceptingOrders, pickUpVariables, hours } = ctx.request.body;
+
+        // 2.If there is a missing value return an error
+        if (!pickUpVariables || !hours) {
+            return ctx.throw(400, "Not all values were givens")
+        }
+        // 3.Make sure all values submitted are valid
+        //3a. make sure all of pickUpVariables values (earlyBookingMins,pickUpInterval, minWaitingTime,userSelectionTime) are valid
+
+
+        const isPickUpVarsValid = Number.isInteger(Number(pickUpVariables.earlyBookingMins)) &&
+            Number.isInteger(Number(pickUpVariables.pickUpInterval)) &&
+            Number.isInteger(Number(pickUpVariables.minWaitingTime)) &&
+            Number.isInteger(Number(pickUpVariables.userSelectionTime));
+
+        if (!isPickUpVarsValid) {
+            return ctx.throw(400, 'Pick Up variables passed is not valid');
+        }
+
+        //3b. make sure business hours are values (open, closed) are valid
+        const isBusinessHoursValid = pluginFunctions('working-hours').validateWeeklyHours(hours.open);
+        if (isBusinessHoursValid.error) {
+            return ctx.throw(400, isBusinessHoursValid.error.message);
+        }
+
+
+        // 4.All values should be in correct default format
+        const businessData = { isAcceptingOrders, pickUpVariables, hours };
+        if (!isAcceptingOrders) {
+            businessData.isAcceptingOrders = false;
+        }
+
+        businessData.hours.open = JSON.stringify(businessData.hours.open);
+        businessData.hours.closed = JSON.stringify(businessData.hours.closed);
+        // 5.Update the business data
+        const result = await pluginStore.set({ key: 'business', value: businessData });
+        ctx.send({ result });
+
+
+    },
     getBusinessHours: async (ctx) => {
         const plugin = strapi.plugins[pluginId];
         const pluginStore = plugin.services.index.pluginStore();
@@ -64,11 +123,14 @@ module.exports = {
         const pluginStore = plugin.services.index.pluginStore();
         const pluginFunctions = plugin.services.index.pluginFunctions;
 
+
+        const pickUpInfo = await pluginStore.get({ key: 'businessInfo.pickUpInfo' });
+
         //Should be saved in plugin store and choosen by admin
-        const maxMinsInAdvance = 60 * 3;
-        const pickupInterval = 20;
-        const minWaitingTime = 10;
-        const userMinTimeToOrder = 8;
+        const maxMinsInAdvance = pickUpInfo.earlyBookingMins;
+        const pickupInterval = pickUpInfo.pickUpInterval;
+        const minWaitingTime = pickUpInfo.minWaitingTime;
+        const userMinTimeToOrder = pickUpInfo.userSelectionTime;
 
 
         //Get business hours
@@ -103,14 +165,15 @@ module.exports = {
         const pluginFunctions = plugin.services;
 
         let businessHours = await pluginStore.get({ key: 'businessHours' });
+        const pickUpInfo = await pluginStore.get({ key: 'businessInfo.pickUpInfo' });
 
         if (!_pickUpTime) {
             ctx.throw(400, "You must pass _pickUpTime as a query")
         }
 
         //Should be saved in plugin store and choosen by admin
-        const maxMinsInAdvance = 60 * 3;
-        const minWaitingTime = 10;
+        const maxMinsInAdvance = pickUpInfo.earlyBookingMins;
+        const minWaitingTime = pickUpInfo.minWaitingTime;
 
 
         //Get the current time the user is trying to order and the max time the user is allowed to order in milliseconds
@@ -157,5 +220,39 @@ module.exports = {
             nextPickUp: allFuturePickUps.length > 0 ? allFuturePickUps[0] : null,
         };
 
+    },
+    setBusinessPickUpInfo: async (ctx) => {
+
+        const plugin = strapi.plugins[pluginId];
+        const pluginStore = plugin.services.index.pluginStore();
+
+        const {
+            earlyBookingMins,
+            pickUpInterval,
+            minWaitingTime,
+            userSelectionTime
+        } = ctx.request.body;
+
+
+        const result = await pluginStore.set({
+            key: 'businessInfo.pickUpInfo', value: {
+                earlyBookingMins,
+                pickUpInterval,
+                minWaitingTime,
+                userSelectionTime
+            }
+        })
+        ctx.send({ result });
+    },
+    getBusinessPickUpInfo: async (ctx) => {
+        const plugin = strapi.plugins[pluginId];
+        const pluginStore = plugin.services.index.pluginStore();
+
+        const pickUpInfo = await pluginStore.get({ key: 'businessInfo.pickUpInfo' });
+        ctx.send({
+            pickUpInfo: pickUpInfo || ''
+        })
+
     }
+
 }

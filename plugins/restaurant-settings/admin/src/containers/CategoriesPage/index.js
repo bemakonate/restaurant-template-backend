@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { request } from 'strapi-helper-plugin';
 import pluginId from '../../pluginId';
 import Table from '../../components/strapiStyles/Table/Table';
-// import CategoryHour from '../TimedCategoryPage';
+import { Button } from '@buffetjs/core';
 
 const CategoriesPage = (props) => {
     const [fetchingTimedCategories, setFetchingTimedCategories] = useState(null);
@@ -37,6 +37,7 @@ const CategoriesPage = (props) => {
     ];
 
     let timedCategoriesTable = null;
+    const goBackBtnClicked = () => props.history.push(`/plugins/${pluginId}`);
     if (timedCategories && timedCategories.length > 0) {
         const tableRows = timedCategories.map((timedCategory) => {
             return {
@@ -50,7 +51,7 @@ const CategoriesPage = (props) => {
             <Table
                 headers={headers}
                 rows={tableRows}
-                onClickRow={(e, data) => props.history.push(`/plugins/${pluginId}/categories/${data.id}`)} />
+                onClickRow={(e, data) => props.history.push(`/plugins/${pluginId}/category/${data.id}`)} />
 
         )
     }
@@ -58,6 +59,9 @@ const CategoriesPage = (props) => {
 
     return (
         <div>
+            <h1>Categories</h1>
+            <p>Advance Settings</p>
+            <Button onClick={goBackBtnClicked}>Go Back</Button>
             {timedCategoriesTable}
         </div>
     )

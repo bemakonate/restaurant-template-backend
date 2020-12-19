@@ -97,30 +97,41 @@ const CategoryPage = (props) => {
         if (!isChangesSaved) {
             const discardChanges = confirm("changes weren't saved");
             if (discardChanges) {
-                props.history.push(`/plugins/${pluginId}/categories`)
+                props.history.goBack();
             }
         } else {
-            props.history.push(`/plugins/${pluginId}/categories`)
+            props.history.goBack()
         }
+    }
+
+
+
+    let categoryJSX = null;
+    if (category) {
+        categoryJSX = (
+            <React.Fragment>
+                {/* Save Buttons */}
+                <h1>{category.name}</h1>
+                <p>Advance Settings</p>
+                <div>
+                    <Button onClick={goBackBtnClicked}>Go Back</Button>
+                    <Button color="success" label="Save" onClick={saveBtnClicked} disabled={isChangesSaved} />
+                </div>
+
+
+                <EntityAvailability
+                    open={JSON.parse(category.hours.open)}
+                    source={category.hours.source}
+                    getEntityAvailability={(data) => setCategoryCurrentAvail(data)}
+                    limitSources={['business', 'none', 'custom']}
+                />
+            </React.Fragment>
+        )
     }
 
     return (
         <div>
-            {/* Save Buttons */}
-            <div>
-                <Button onClick={goBackBtnClicked}>Go Back</Button>
-                <Button color="success" label="Save" onClick={saveBtnClicked} disabled={isChangesSaved} />
-            </div>
-
-
-            {category && <EntityAvailability
-                open={JSON.parse(category.hours.open)}
-                source={category.hours.source}
-                getEntityAvailability={(data) => setCategoryCurrentAvail(data)}
-                limitSources={['business', 'none', 'custom']}
-            />}
-
-
+            {categoryJSX}
         </div>
     )
 }

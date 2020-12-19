@@ -2,6 +2,22 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/business",
+      "handler": "business-hours.getBusinessData",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/business",
+      "handler": "business-hours.setBusinessData",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/business-hours",
       "handler": "business-hours.getBusinessHours",
       "config": {
@@ -12,6 +28,26 @@
       "method": "POST",
       "path": "/business-hours",
       "handler": "business-hours.updateBusinessHours",
+      "config": {
+        "policies": [
+          "plugins::restaurant-settings.isAdmin"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/business-hours/admin-pick-up",
+      "handler": "business-hours.getBusinessPickUpInfo",
+      "config": {
+        "policies": [
+          "plugins::restaurant-settings.isAdmin"
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/business-hours/admin-pick-up",
+      "handler": "business-hours.setBusinessPickUpInfo",
       "config": {
         "policies": [
           "plugins::restaurant-settings.isAdmin"

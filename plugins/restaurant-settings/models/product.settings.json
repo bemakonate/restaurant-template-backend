@@ -23,6 +23,13 @@
     "description": {
       "type": "text"
     },
+    "advanceSettings": {
+      "type": "json",
+      "route": "/plugins/restaurant-settings/product",
+      "useParam": true,
+      "paramId": "id",
+      "text": "Advance Settings"
+    },
     "sideProducts": {
       "plugin": "restaurant-settings",
       "collection": "side-product",

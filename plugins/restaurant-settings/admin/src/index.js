@@ -1,3 +1,4 @@
+import React from 'react';
 
 import pluginPkg from '../../package.json';
 import pluginId from './pluginId';
@@ -6,6 +7,7 @@ import Initializer from './containers/Initializer';
 import lifecycles from './lifecycles';
 import trads from './translations';
 import PluginSecretsPage from './containers/PluginSecretsPage'
+import { withRouter } from "react-router";
 
 
 export default strapi => {
@@ -71,5 +73,31 @@ export default strapi => {
     },
   };
 
+  const AdvBtn = withRouter((props) => {
+    const contentType = props.contentTypeUID.substr(29);
+
+    let routePush = null;
+    const route = props.attribute.route;
+    const paramId = props.attribute.paramId;
+    const useParam = props.attribute.useParam;
+
+    if (route) {
+      let routeLink = route;
+      if (useParam) {
+        routeLink += `/${props.match.params[paramId]}`
+      }
+      routePush = () => props.history.push(routeLink);
+    }
+    return (
+      <div>
+        <button
+          onClick={routePush}>
+          {props.attribute.text}
+        </button>
+      </div>
+    )
+  });
+
+  strapi.registerField({ type: 'json', Component: AdvBtn });
   return strapi.registerPlugin(plugin);
 };

@@ -1,3 +1,15 @@
+//======== WORKING HOURS EXAMPLE ==========
+//  {
+//   5: null,
+//   6: null,
+//   2: null,
+//   3: null,
+//   0: ['06:30:00', '12:00:00', '13:30:00', '17:00:00'],
+//   1: ['09:30:00', '17:00:00'],
+//   4: ['06:30:00', '12:00:00', '13:30:00', '17:00:00'],
+// };
+
+
 const { isJson, validateHhMm, arrayEquals, msToHHMM, getDates } = require('./utils/helpers');
 const { getWorkingTimePickupsInMs } = require('./utils/working-hours');
 const moment = require('moment-business-time');

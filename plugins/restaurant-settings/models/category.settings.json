@@ -20,8 +20,12 @@
     "description": {
       "type": "text"
     },
-    "createCategoryPage": {
-      "type": "boolean"
+    "advanceSettings": {
+      "type": "json",
+      "route": "/plugins/restaurant-settings/categories",
+      "useParam": true,
+      "paramId": "id",
+      "text": "Advance Settings"
     },
     "products": {
       "plugin": "restaurant-settings",

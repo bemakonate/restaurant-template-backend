@@ -22,13 +22,14 @@ const App = () => {
   return (
     <div>
       <Switch>
-        <Route path={`/plugins/${pluginId}/business-hours`} component={BusinessHoursPage} exact />
-        <Route path={`/plugins/${pluginId}/categories/:id`} component={CategoryPage} exact />
-        <Route path={`/plugins/${pluginId}/categories`} component={CategoriesPage} exact />
-        <Route path={`/plugins/${pluginId}/products/:id`} component={ProductPage} exact />
-        <Route path={`/plugins/${pluginId}/products`} component={ProductsPage} exact />
-        <Route path={`/plugins/${pluginId}`} component={HomePage} exact />
+        <Route path={`/plugins/${pluginId}/categories/:id`} component={CategoryPage} />
+        <Route path={`/plugins/${pluginId}/product/:id`} component={ProductPage} />
+        <Route path={`/plugins/${pluginId}`} component={BusinessHoursPage} exact />
         <Route component={NotFound} />
+        {/* <Route path={`/plugins/${pluginId}/business-hours`} component={BusinessHoursPage} exact /> */}
+        {/* <Route path={`/plugins/${pluginId}/categories`} component={CategoriesPage} exact /> */}
+        {/* <Route path={`/plugins/${pluginId}/products`} component={ProductsPage} exact /> */}
+
       </Switch>
     </div>
   );

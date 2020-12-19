@@ -81,7 +81,7 @@ const addCategoryHours = async (category) => {
     const newCategory = await plugin.services['populate'].populateWorkingHours({
         entity: category,
         workingHours: categoryHours,
-        source: categoryHours.source
+        source: categoryHours ? categoryHours.source : null,
     });
 
     return newCategory;

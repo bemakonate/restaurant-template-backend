@@ -93,35 +93,42 @@ const ProductPage = (props) => {
         if (!isChangesSaved) {
             const discardChanges = confirm("changes weren't saved");
             if (discardChanges) {
-                props.history.push(`/plugins/${pluginId}/products`)
+                props.history.goBack();
             }
         } else {
-            props.history.push(`/plugins/${pluginId}/products`)
+            props.history.goBack();
         }
     }
 
-    return (
-        <div>
-            {/* Save Buttons */}
+    let productJSX = null;
+
+    if (product) {
+        productJSX = (
             <div>
-                <Button onClick={goBackBtnClicked}>Go Back</Button>
-                <Button color="success" label="Save" onClick={saveBtnClicked}
-                    disabled={isChangesSaved}
-                />
+                {/* Save Buttons */}
+                <div>
+                    <h1>{product.name}</h1>
+                    <p>Advance Settings</p>
+                </div>
+
+                <div>
+                    <Button onClick={goBackBtnClicked}>Go Back</Button>
+                    <Button color="success" label="Save" onClick={saveBtnClicked}
+                        disabled={isChangesSaved}
+                    />
+                </div>
+
+
+
+                <EntityAvailability
+                    open={JSON.parse(product.hours.open)}
+                    source={product.hours.source}
+                    getEntityAvailability={(data) => setCurrentProductAvail(data)} />
             </div>
+        )
+    }
 
-
-
-            {product && <EntityAvailability
-                open={JSON.parse(product.hours.open)}
-                source={product.hours.source}
-                getEntityAvailability={(data) => setCurrentProductAvail(data)}
-            // forceSubmit={submitWeeklyHours} 
-            />}
-
-
-        </div>
-    )
+    return productJSX;
 }
 
 export default ProductPage
