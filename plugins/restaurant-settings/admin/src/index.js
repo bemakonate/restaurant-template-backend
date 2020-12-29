@@ -79,23 +79,27 @@ export default strapi => {
     let routePush = null;
     const route = props.attribute.route;
     const paramId = props.attribute.paramId;
+    const paramValue = props.match.params[paramId]
     const useParam = props.attribute.useParam;
+
 
     if (route) {
       let routeLink = route;
       if (useParam) {
-        routeLink += `/${props.match.params[paramId]}`
+        routeLink += `/${paramValue}`
       }
       routePush = () => props.history.push(routeLink);
     }
-    return (
-      <div>
-        <button
-          onClick={routePush}>
-          {props.attribute.text}
-        </button>
-      </div>
+
+    const advBtn = !isNaN(paramValue) && (
+      <button
+        onClick={routePush}>
+        {props.attribute.text}
+      </button>
     )
+
+
+    return advBtn;
   });
 
   strapi.registerField({ type: 'json', Component: AdvBtn });

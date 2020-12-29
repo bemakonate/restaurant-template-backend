@@ -11,6 +11,9 @@ const moment = require('moment-business-time');
 // hours
 //     open (json)
 //     closed (json)
+// ordering
+//     taxRate (int)
+//     minimumPayment (int)
 
 
 
@@ -20,6 +23,7 @@ module.exports = {
         const plugin = strapi.plugins[pluginId];
         const pluginStore = plugin.services.index.pluginStore();
         const pluginFunctions = plugin.services.index.pluginFunctions();
+
 
         const business = await pluginStore.get({ key: 'business' });
 
@@ -34,10 +38,10 @@ module.exports = {
         const pluginFunctions = plugin.services.index.pluginFunctions;
 
         // 1.Get the new business data from req
-        const { isAcceptingOrders, pickUpVariables, hours } = ctx.request.body;
+        const { isAcceptingOrders, pickUpVariables, hours, ordering } = ctx.request.body;
 
         // 2.If there is a missing value return an error
-        if (!pickUpVariables || !hours) {
+        if (!pickUpVariables || !hours || !ordering) {
             return ctx.throw(400, "Not all values were givens")
         }
         // 3.Make sure all values submitted are valid
@@ -59,63 +63,25 @@ module.exports = {
             return ctx.throw(400, isBusinessHoursValid.error.message);
         }
 
+        //3c. make sure all ordering data is valid
+        const isOrderingValid = !isNaN(ordering.taxRate) && !isNaN(ordering.minimumPayment);
+        if (!isOrderingValid) {
+            return ctx.throw(400, "Ordering values passed is not valid");
+        }
+
 
         // 4.All values should be in correct default format
-        const businessData = { isAcceptingOrders, pickUpVariables, hours };
-        if (!isAcceptingOrders) {
-            businessData.isAcceptingOrders = false;
-        }
+        const businessData = { isAcceptingOrders, pickUpVariables, hours, ordering };
 
         businessData.hours.open = JSON.stringify(businessData.hours.open);
         businessData.hours.closed = JSON.stringify(businessData.hours.closed);
         // 5.Update the business data
         const result = await pluginStore.set({ key: 'business', value: businessData });
+
+
         ctx.send({ result });
 
 
-    },
-    getBusinessHours: async (ctx) => {
-        const plugin = strapi.plugins[pluginId];
-        const pluginStore = plugin.services.index.pluginStore();
-        const pluginFunctions = plugin.services.index.pluginFunctions();
-
-        const businessHours = await pluginStore.get({ key: 'businessHours' });
-
-
-        //We want to return the business hours in json format b/c of graphql 
-        return {
-            source: 'custom',
-            open: businessHours ? businessHours.open : JSON.stringify(pluginFunctions.defaultWorkingHours()),
-            closed: businessHours ? businessHours.closed : JSON.stringify(null),
-        };
-
-    },
-    updateBusinessHours: async (ctx) => {
-        let { open: openHours, closed: closedHours } = ctx.request.body;
-
-        const plugin = strapi.plugins[pluginId];
-        const pluginStore = plugin.services.index.pluginStore();
-        const pluginFunctions = plugin.services.index.pluginFunctions;
-
-
-        if (!openHours) {
-            return ctx.throw(400, "Please provide the business hours")
-        }
-
-        //Will make sure that open hours returned is in a valid syntax
-        const isBusinessHoursValid = pluginFunctions('working-hours').validateWeeklyHours(openHours);
-        if (isBusinessHoursValid.error) {
-            return ctx.throw(400, isBusinessHoursValid.error.message);
-        }
-
-
-        //Make sure all business hours are saved in json format
-        openHours = JSON.stringify(openHours);
-        closedHours = JSON.stringify(closedHours);
-
-
-        const result = await pluginStore.set({ key: 'businessHours', value: { open: openHours, closed: closedHours } });
-        ctx.send({ result });
     },
     getOpenPickUps: async (ctx) => {
 
@@ -123,8 +89,15 @@ module.exports = {
         const pluginStore = plugin.services.index.pluginStore();
         const pluginFunctions = plugin.services.index.pluginFunctions;
 
+        const businessData = await pluginStore.get({ key: 'business' });
 
-        const pickUpInfo = await pluginStore.get({ key: 'businessInfo.pickUpInfo' });
+        if (!businessData) {
+            return ctx.throw(400, 'There are no business hours')
+        }
+
+
+        const pickUpInfo = businessData.pickUpVariables;
+        const isAcceptingOrders = businessData.ordering.isAcceptingOrders;
 
         //Should be saved in plugin store and choosen by admin
         const maxMinsInAdvance = pickUpInfo.earlyBookingMins;
@@ -132,16 +105,20 @@ module.exports = {
         const minWaitingTime = pickUpInfo.minWaitingTime;
         const userMinTimeToOrder = pickUpInfo.userSelectionTime;
 
+        if (!maxMinsInAdvance || !userMinTimeToOrder) {
+            return ctx.throw(400, "Pick Up varibales doesn't allow user to order")
+        }
+
 
         //Get business hours
-        const hours = await pluginStore.get({ key: 'businessHours' });
+        const hours = businessData.hours;
         const workingHours = JSON.parse(hours.open);
 
 
         //Get the current time the user is trying to order and the max time the user is allowed to order in milliseconds
-        const currentTime = moment();
+        const currentTime = moment().valueOf();
         let currentOrderingDate = moment.duration(currentTime).add(userMinTimeToOrder, 'minutes');
-        let maxOrderingDate = moment.duration(currentOrderingDate).add(maxMinsInAdvance, 'minutes');
+        let maxOrderingDate = moment.duration(currentTime).add(maxMinsInAdvance, 'minutes');
 
 
         let currentOrderingDateMs = currentOrderingDate._milliseconds;
@@ -151,9 +128,11 @@ module.exports = {
         const openPickUps = pluginFunctions('working-hours').currentPossiblePickups({ currentOrderingDateMs, maxOrderingDateMs, workingHours, minWaitingTime, pickupInterval });
 
 
+
         //Only return pick up times if there are pick up times available
         return {
-            openPickUps: Object.keys(openPickUps).length > 0 ? openPickUps : null,
+            openPickUps: (Object.keys(openPickUps).length > 0) && isAcceptingOrders ? openPickUps : null,
+            isAcceptingOrders,
         };
 
     },
@@ -164,16 +143,23 @@ module.exports = {
         const pluginStore = plugin.services.index.pluginStore();
         const pluginFunctions = plugin.services;
 
-        let businessHours = await pluginStore.get({ key: 'businessHours' });
-        const pickUpInfo = await pluginStore.get({ key: 'businessInfo.pickUpInfo' });
 
         if (!_pickUpTime) {
             ctx.throw(400, "You must pass _pickUpTime as a query")
         }
 
+        const businessData = await pluginStore.get({ key: 'business' });
+        if (!businessData) {
+            return ctx.throw(400, 'There are no business hours')
+        }
+
+        const businessHours = businessData.hours;
+        const pickUpInfo = businessData.pickUpVariables;
+        const isAcceptingOrders = businessData.ordering.isAcceptingOrders;
         //Should be saved in plugin store and choosen by admin
         const maxMinsInAdvance = pickUpInfo.earlyBookingMins;
         const minWaitingTime = pickUpInfo.minWaitingTime;
+
 
 
         //Get the current time the user is trying to order and the max time the user is allowed to order in milliseconds
@@ -190,7 +176,7 @@ module.exports = {
         }
 
         //isPickUpValid will check to see the business is open during pickUpTime
-        const isPickUpValid = pluginFunctions['working-hours'].isOpenForPickUp({ hours: businessHours, pickUpTime: _pickUpTime });
+        const isPickUpValid = pluginFunctions['working-hours'].isOpenForPickUp({ hours: businessHours, pickUpTime: _pickUpTime, isAcceptingOrders });
 
 
         //pickUpExpiringTime is before the waiting time needed to create product for pick up (milliseconds)
@@ -203,6 +189,7 @@ module.exports = {
             isValid,
             pickUpTime,
             pickUpExpiringTime,
+            isAcceptingOrders,
 
         }
     },
@@ -221,38 +208,5 @@ module.exports = {
         };
 
     },
-    setBusinessPickUpInfo: async (ctx) => {
-
-        const plugin = strapi.plugins[pluginId];
-        const pluginStore = plugin.services.index.pluginStore();
-
-        const {
-            earlyBookingMins,
-            pickUpInterval,
-            minWaitingTime,
-            userSelectionTime
-        } = ctx.request.body;
-
-
-        const result = await pluginStore.set({
-            key: 'businessInfo.pickUpInfo', value: {
-                earlyBookingMins,
-                pickUpInterval,
-                minWaitingTime,
-                userSelectionTime
-            }
-        })
-        ctx.send({ result });
-    },
-    getBusinessPickUpInfo: async (ctx) => {
-        const plugin = strapi.plugins[pluginId];
-        const pluginStore = plugin.services.index.pluginStore();
-
-        const pickUpInfo = await pluginStore.get({ key: 'businessInfo.pickUpInfo' });
-        ctx.send({
-            pickUpInfo: pickUpInfo || ''
-        })
-
-    }
 
 }

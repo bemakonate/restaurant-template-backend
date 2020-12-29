@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import WeeklyHours, { EnhancedWeeklyHours } from '../../../components/WeeklyHoursModule';
-import Toggle from '../../../components/strapiStyles/Toggle/StrapiToggle';
-import pluginId from '../../../pluginId';
-import { compare } from '../../../utils/helpers';
+import WeeklyHours, { EnhancedWeeklyHours } from '../../components/WeeklyHoursModule';
+import Toggle from '../../components/strapiStyles/Toggle/StrapiToggle';
+import pluginId from '../../pluginId';
+import { compare } from '../../utils/helpers';
 import { InputText, Button, Padded, Label, Textarea } from '@buffetjs/core';
-import EntityAvailability from '../../../components/EntityAvailability';
+import EntityAvailability from '../../components/EntityAvailability';
 import { request } from 'strapi-helper-plugin'
 
 import { useParams, useHistory } from 'react-router-dom';

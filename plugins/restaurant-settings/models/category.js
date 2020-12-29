@@ -5,27 +5,26 @@
  * to customize this model
  */
 
-const validSubCategoriesProducts = (subCategories, allProducts) => {
-    const newSubCategories = subCategories.map(subCategory => {
-        const newSubCategoryProducts = subCategory.products.filter(subCategoryProduct => {
-            const belongsToCategory = allProducts ? allProducts.find(product => product === subCategoryProduct) : false;
-            return belongsToCategory;
+const getAllProducts = (subCategories) => {
+    const allProducts = [];
+    subCategories.forEach(subCategory => {
+        subCategory.products.forEach(subCategoryProduct => {
+            allProducts.push(subCategoryProduct);
         })
-        return { ...subCategory, products: newSubCategoryProducts }
     })
-    return newSubCategories;
+
+    return [...new Set(allProducts)];
 }
 
 module.exports = {
     lifecycles: {
         beforeUpdate(params, data) {
-            const newSubCategories = validSubCategoriesProducts(data.subCategories, data.products);
-            data.subCategories = newSubCategories;
-
+            const newProducts = getAllProducts(data.subCategories);
+            data.products = newProducts;
         },
         beforeCreate(data) {
-            const newSubCategories = validSubCategoriesProducts(data.subCategories, data.products);
-            data.subCategories = newSubCategories;
+            const newProducts = getAllProducts(data.subCategories);
+            data.products = newProducts;
         }
     }
 

@@ -16,7 +16,7 @@ module.exports = {
     restaurantSideProduct(id: ID): restaurantSettingsSideProduct!
     restaurantCategories(pickUpTime: String): [restaurantSettingsCategory!]
     restaurantCategory(id: ID, pickUpTime: String): restaurantSettingsCategory!
-    restaurantBusinessHours: weeklyHours!
+
 
 
   `,
@@ -47,10 +47,6 @@ module.exports = {
             description: 'This is the resturant plugin',
             resolver: 'plugins::restaurant-settings.categories.getCategory',     
         },
-        restaurantBusinessHours:{
-            description: 'This is the resturant plugin',
-            resolver: 'plugins::restaurant-settings.business-hours.getBusinessHours', 
-        }
   }
 }
 }

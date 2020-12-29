@@ -27,7 +27,8 @@ module.exports = {
         //If the product doesn't exist in the database return an error
         const entity = await strapi.query("product", pluginId).findOne({ id });
         if (!entity) {
-            return ctx.throw(400, "The product doesn't exist")
+            // return ctx.throw(400, "The product doesn't exist")
+            return new Error("The product doesn't exist")
         }
         //-------------------------
 

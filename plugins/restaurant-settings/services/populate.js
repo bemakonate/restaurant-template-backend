@@ -8,7 +8,8 @@ const { sanitizeEntity } = require('strapi-utils');
 const populateWorkingHours = async ({ source, workingHours, entity, type }) => {
     const plugin = strapi.plugins[pluginId];
     const pluginStore = plugin.services.index.pluginStore();
-    const businessHours = await pluginStore.get({ key: 'businessHours' });
+    const businessData = await pluginStore.get({ key: 'business' });
+    const businessHours = businessData.hours;
 
     //If source is business hours return the current business hours
     if (workingHours && source === 'business') {

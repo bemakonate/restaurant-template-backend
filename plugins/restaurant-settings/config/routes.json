@@ -18,44 +18,6 @@
     },
     {
       "method": "GET",
-      "path": "/business-hours",
-      "handler": "business-hours.getBusinessHours",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/business-hours",
-      "handler": "business-hours.updateBusinessHours",
-      "config": {
-        "policies": [
-          "plugins::restaurant-settings.isAdmin"
-        ]
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/business-hours/admin-pick-up",
-      "handler": "business-hours.getBusinessPickUpInfo",
-      "config": {
-        "policies": [
-          "plugins::restaurant-settings.isAdmin"
-        ]
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/business-hours/admin-pick-up",
-      "handler": "business-hours.setBusinessPickUpInfo",
-      "config": {
-        "policies": [
-          "plugins::restaurant-settings.isAdmin"
-        ]
-      }
-    },
-    {
-      "method": "GET",
       "path": "/business-hours/open-pickups",
       "handler": "business-hours.getOpenPickUps",
       "config": {
@@ -160,6 +122,24 @@
       "handler": "orders.createOrder",
       "config": {
         "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/orders/validate-cart",
+      "handler": "orders.getValidatedCart",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/orders/:id",
+      "handler": "orders.getOrder",
+      "config": {
+        "policies": [
+          "plugins::restaurant-settings.isAdmin"
+        ]
       }
     },
     {

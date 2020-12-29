@@ -45,7 +45,7 @@ const jsonStrWorkingHours = (workingHours) => {
 }
 
 //Check if pick up time is valid for hours given
-const isOpenForPickUp = ({ pickUpTime, hours }) => {
+const isOpenForPickUp = ({ pickUpTime, hours, isAcceptingOrders = true }) => {
     if (isNaN(pickUpTime)) {
         return false;
     }
@@ -64,8 +64,7 @@ const isOpenForPickUp = ({ pickUpTime, hours }) => {
     //2.check to see if the category is available for pickupTime
     const pickUpNum = Number(pickUpTime)
     const momentPickUpTime = moment(pickUpNum);
-    const isOpenForPickUp = momentPickUpTime.isWorkingTime();
-
+    const isOpenForPickUp = isAcceptingOrders && Date.now() < pickUpNum && momentPickUpTime.isWorkingTime();
 
 
     return isOpenForPickUp;
@@ -226,12 +225,13 @@ const currentPossiblePickups = ({ currentOrderingDateMs, maxOrderingDateMs, work
 
 
                 //Only add to possible pick ups if the current ordering date is before the pick up time expires and pick up date less than max ordering date
+
+
                 if ((currentOrderingDateMs < preOrderDateMs) && (pickupDateMs < maxOrderingDateMs)) {
                     pickupDates[dayStr].push({
                         preOrderTime: preOrderDateMs,
                         pickUpTime: pickupDateMs,
                     })
-
                 }
             })
         }
@@ -243,6 +243,8 @@ const currentPossiblePickups = ({ currentOrderingDateMs, maxOrderingDateMs, work
             delete pickupDates[dateStr];
         }
     }
+
+
     return pickupDates;
 }
 

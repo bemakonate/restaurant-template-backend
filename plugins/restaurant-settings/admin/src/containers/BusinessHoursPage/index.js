@@ -74,11 +74,25 @@ const InputNumWrapper = styled.div`
 
 `
 
+const defaultValues = {
+  isAcceptingOrders: false,
+  pickUpVariables: {
+    earlyBookingMins: 0,
+    pickUpInterval: 0,
+    minWaitingTime: 0,
+    userSelectionTime: 0,
+  },
+  hours: {
+    open: JSON.stringify(null),
+    closed: JSON.stringify(null)
+  }
+}
 const BusinessHoursPage = (props) => {
   const [fetchingBusinessData, setFetchingBusinessData] = useState(false);
   const [businessData, setBusinessData] = useState(null);
   const [currentBusinessData, setCurrentBusinessData] = useState(null);
   const [isChangesSaved, setIsChangesSaved] = useState(null);
+  const [isInitialSetUp, setIsInitialSetUp] = useState(null);
 
 
   const [businessHoursCurrentAvail, setBusinessHoursCurrentAvail] = useState(null);
@@ -88,9 +102,11 @@ const BusinessHoursPage = (props) => {
     minWaitingTime: 0,
     userSelectionTime: 0,
   });
-  const [isAcceptingOrders, setIsAcceptingOrders] = useState(false);
-
-
+  const [orderingForm, setOrderingForm] = useState({
+    isAcceptingOrders: false,
+    taxRate: 0,
+    minimumPayment: 0,
+  })
 
 
 
@@ -106,15 +122,15 @@ const BusinessHoursPage = (props) => {
   useEffect(() => {
     if (businessData) {
       businessData.pickUpVariables && setPickUpForm({ ...businessData.pickUpVariables });
-      businessData.isAcceptingOrders && setIsAcceptingOrders(businessData.isAcceptingOrders);
+      businessData.ordering && setOrderingForm({ ...businessData.ordering });
     }
   }, [businessData])
 
   useEffect(() => {
     const currentBusinessData = {
-      isAcceptingOrders,
       pickUpVariables: pickUpForm,
-      hours: { open: null, closed: null }
+      hours: { open: null, closed: null },
+      ordering: orderingForm,
     }
 
     if (businessData) {
@@ -122,7 +138,7 @@ const BusinessHoursPage = (props) => {
       currentBusinessData.hours.closed = JSON.stringify(null);
     }
     setCurrentBusinessData(currentBusinessData);
-  }, [pickUpForm, businessHoursCurrentAvail, isAcceptingOrders])
+  }, [pickUpForm, businessHoursCurrentAvail, orderingForm])
 
 
   useEffect(() => {
@@ -136,29 +152,19 @@ const BusinessHoursPage = (props) => {
   }, [fetchingBusinessData, currentBusinessData])
 
 
-  const goBackBtnClicked = () => {
-    if (!isChangesSaved) {
-      const discardChanges = confirm("changes weren't saved");
-      if (discardChanges) {
-        props.history.goBack();
-      }
-    } else {
-      props.history.goBack();
-    }
-  }
 
 
   const getBusinessData = async () => {
     setFetchingBusinessData(true);
     const res = await request(`/${pluginId}/business`, { method: 'GET' });
-    setBusinessData(res.business);
+    setBusinessData(res.business || defaultValues);
+    setIsInitialSetUp(!res.business ? true : false);
     setFetchingBusinessData(false);
   }
 
 
-  const updatePickUpForm = ({ value, key }) => {
-    setPickUpForm({ ...pickUpForm, [key]: value });
-  }
+  const updatePickUpForm = ({ value, key }) => setPickUpForm({ ...pickUpForm, [key]: value });
+  const updateOrderingForm = ({ value, key }) => setOrderingForm({ ...orderingForm, [key]: value });
 
 
   const saveBtnClicked = () => {
@@ -176,9 +182,9 @@ const BusinessHoursPage = (props) => {
     strapi.lockApp();
     try {
       const businessData = {
-        isAcceptingOrders: false,
         pickUpVariables: pickUpForm,
-        hours: { open: businessHoursCurrentAvail.data.open, closed: null }
+        hours: { open: businessHoursCurrentAvail.data.open, closed: null },
+        ordering: orderingForm,
       }
 
       const res = await request(`/${pluginId}/business`, {
@@ -196,20 +202,42 @@ const BusinessHoursPage = (props) => {
     }
   }
 
-  const isAcceptingOrdersText = isAcceptingOrders ? 'true' : 'false';
+  const isAcceptingOrdersText = orderingForm.isAcceptingOrders ? 'true' : 'false';
   return (
     <div>
-      <h1>Business Setting </h1>
+      {isInitialSetUp ? <h1>Create New Business Setting </h1> : <h1>Business Setting </h1>}
       <div>
-        <Button onClick={goBackBtnClicked}>Go Back</Button>
         <Button color="success" label="Save" onClick={saveBtnClicked} disabled={isChangesSaved} />
       </div>
 
 
-      <h3>Is Accepting Orders</h3>
-      <div>
+      <div className="ordering">
+        <div>
+          <h3>Is Accepting Orders</h3>
+          <div onClick={() => updateOrderingForm({ key: 'isAcceptingOrders', value: !orderingForm.isAcceptingOrders })}>
+            {isAcceptingOrdersText}
+          </div>
+        </div>
 
-        <div onClick={() => setIsAcceptingOrders(!isAcceptingOrders)}>{isAcceptingOrdersText}</div>
+        <div style={{ width: '200px' }}>
+          <h3>Tax rate</h3>
+          <p>In percentage(%)</p>
+          <InputNumber
+            name="tax-rate"
+            onChange={(e) => updateOrderingForm({ key: 'taxRate', value: e.target.value })}
+            value={orderingForm.taxRate}
+            placeholder="" />
+        </div>
+
+        <div style={{ width: '200px' }}>
+          <h3>Minimum Payment</h3>
+          <p>Dollars(3.00)</p>
+          <InputNumber
+            name="minimum-payment"
+            onChange={(e) => updateOrderingForm({ key: 'minimumPayment', value: e.target.value })}
+            value={orderingForm.minimumPayment}
+            placeholder="" />
+        </div>
       </div>
 
       {!fetchingBusinessData && <PickUpInputs>
