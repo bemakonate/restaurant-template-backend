@@ -11,21 +11,14 @@
     "comment": ""
   },
   "attributes": {
-    "name": {
+    "title": {
       "type": "string"
     },
-    "title": {
+    "tagline": {
       "type": "string"
     },
     "description": {
       "type": "text"
-    },
-    "advanceSettings": {
-      "type": "json",
-      "route": "/plugins/restaurant-settings/categories",
-      "useParam": true,
-      "paramId": "id",
-      "text": "Advance Settings"
     },
     "products": {
       "plugin": "restaurant-settings",

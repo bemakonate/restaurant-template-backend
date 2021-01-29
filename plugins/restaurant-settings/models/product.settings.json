@@ -23,23 +23,16 @@
     "description": {
       "type": "text"
     },
-    "advanceSettings": {
-      "type": "json",
-      "route": "/plugins/restaurant-settings/products",
-      "useParam": true,
-      "paramId": "id",
-      "text": "Advance Settings"
+    "categories": {
+      "plugin": "restaurant-settings",
+      "via": "products",
+      "collection": "category"
     },
     "sideProducts": {
       "plugin": "restaurant-settings",
       "collection": "side-product",
       "via": "products",
       "dominant": true
-    },
-    "categories": {
-      "plugin": "restaurant-settings",
-      "via": "products",
-      "collection": "category"
     }
   }
 }

@@ -1,13 +1,10 @@
-import React from 'react';
-
 import pluginPkg from '../../package.json';
 import pluginId from './pluginId';
 import App from './containers/App';
 import Initializer from './containers/Initializer';
 import lifecycles from './lifecycles';
 import trads from './translations';
-import PluginSecretsPage from './containers/PluginSecretsPage'
-import { withRouter } from "react-router";
+
 
 
 export default strapi => {
@@ -38,16 +35,7 @@ export default strapi => {
           id: pluginId,
           defaultMessage: 'Restuarant Settings'
         },
-        links: [
-          {
-            title: {
-              id: `${pluginId}.secrets`,
-              defaultMessage: 'Secrets'
-            },
-            to: `${strapi.settingsBaseURL}/${pluginId}/secrets`,
-            Component: PluginSecretsPage,
-          }
-        ]
+        links: []
       },
 
     },
@@ -73,35 +61,6 @@ export default strapi => {
     },
   };
 
-  const AdvBtn = withRouter((props) => {
-    const contentType = props.contentTypeUID.substr(29);
 
-    let routePush = null;
-    const route = props.attribute.route;
-    const paramId = props.attribute.paramId;
-    const paramValue = props.match.params[paramId]
-    const useParam = props.attribute.useParam;
-
-
-    if (route) {
-      let routeLink = route;
-      if (useParam) {
-        routeLink += `/${paramValue}`
-      }
-      routePush = () => props.history.push(routeLink);
-    }
-
-    const advBtn = !isNaN(paramValue) && (
-      <button
-        onClick={routePush}>
-        {props.attribute.text}
-      </button>
-    )
-
-
-    return advBtn;
-  });
-
-  strapi.registerField({ type: 'json', Component: AdvBtn });
   return strapi.registerPlugin(plugin);
 };

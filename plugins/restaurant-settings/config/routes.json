@@ -18,30 +18,6 @@
     },
     {
       "method": "GET",
-      "path": "/business-hours/open-pickups",
-      "handler": "business-hours.getOpenPickUps",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/business-hours/is-pickup-valid",
-      "handler": "business-hours.getIsPickUpTimeValid",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/business-hours/next-open-pickup",
-      "handler": "business-hours.getNextOpenPickUp",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
       "path": "/categories",
       "handler": "categories.getCategories",
       "config": {
@@ -52,16 +28,6 @@
       "method": "GET",
       "path": "/categories/:id",
       "handler": "categories.getCategory",
-      "config": {
-        "policies": [
-          "plugins::restaurant-settings.isCategory"
-        ]
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/categories/:id",
-      "handler": "categories.updateCategory",
       "config": {
         "policies": [
           "plugins::restaurant-settings.isCategory"
@@ -85,14 +51,6 @@
       }
     },
     {
-      "method": "POST",
-      "path": "/products/:id",
-      "handler": "products.updateProduct",
-      "config": {
-        "policies": []
-      }
-    },
-    {
       "method": "GET",
       "path": "/side-products",
       "handler": "side-products.getSideProducts",
@@ -106,60 +64,6 @@
       "handler": "side-products.getSideProduct",
       "config": {
         "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/orders/payment",
-      "handler": "orders.setUpStripe",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/orders/create",
-      "handler": "orders.createOrder",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/orders/validate-cart",
-      "handler": "orders.getValidatedCart",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/orders/:id",
-      "handler": "orders.getOrder",
-      "config": {
-        "policies": [
-          "plugins::restaurant-settings.isAdmin"
-        ]
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/settings/secrets",
-      "handler": "restaurant-settings.getSecrets",
-      "config": {
-        "policies": [
-          "plugins::restaurant-settings.isAdmin"
-        ]
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/settings/secrets",
-      "handler": "restaurant-settings.setSecrets",
-      "config": {
-        "policies": [
-          "plugins::restaurant-settings.isAdmin"
-        ]
       }
     }
   ]

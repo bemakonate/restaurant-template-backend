@@ -11,8 +11,6 @@ type restaurantSettingsProduct {
     description: String
     sideProducts(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsSideProduct]
     categories(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsCategory]
-    isOpenForPickUp: Boolean
-    hours: weeklyHours
 }
 
 type restaurantSettingsSideProduct {
@@ -35,12 +33,11 @@ type restaurantSettingsCategory {
     updatedAt: DateTime!
     name: String
     title:String
+    tagline: String
     description: String
     createCategoryPage: Boolean
     products(sort: String, limit: Int, start: Int, where: JSON): [restaurantSettingsProduct]
-    hours:weeklyHours
     subCategories: [componentSubCategory]
-    isOpenForPickUp: Boolean
 }
 `;
 

@@ -12,18 +12,12 @@ import { NotFound } from 'strapi-helper-plugin';
 import pluginId from '../../pluginId';
 // Containers
 
-import BusinessHoursPage from '../BusinessHoursPage'
-import CategoryPage from '../CategoryPage';
-import ProductPage from '../ProductPage';
-import OrderPage from '../OrderPage';
+import BusinessHoursPage from '../BusinessHoursPage';
 
 const App = () => {
   return (
     <div>
       <Switch>
-        <Route path={`/plugins/${pluginId}/categories/:id`} component={CategoryPage} />
-        <Route path={`/plugins/${pluginId}/products/:id`} component={ProductPage} />
-        <Route path={`/plugins/${pluginId}/orders/:id`} component={OrderPage} />
         <Route path={`/plugins/${pluginId}`} component={BusinessHoursPage} exact />
         <Route component={NotFound} />
       </Switch>
