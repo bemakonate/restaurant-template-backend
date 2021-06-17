@@ -1,12 +1,14 @@
 .TimeInputLabel{
     display:block;
+    font-size: 12px;
+    margin-bottom: 0;
 }
  
 .TimeInput{
-    background:rgb(194, 194, 194);
+    background:rgb(220, 220, 220);
     border-radius:3px;
     font-size: 16px;
-    padding: 3px 5px;
+    padding: 3px 10px;
 }
 
 .TimeFieldError .TimeInput {

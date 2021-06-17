@@ -1,0 +1,23 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_pages",
+  "info": {
+    "name": "Home Page",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "introductionText": {
+      "type": "text"
+    },
+    "popularProducts": {
+      "type": "component",
+      "repeatable": false,
+      "component": "default.products"
+    }
+  }
+}

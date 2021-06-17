@@ -14,3 +14,13 @@
 .TimeInputLabel{
    display:block;
 }
+
+.Container{
+    padding-top:60px;
+    width:85%;
+    margin:0 auto;
+}
+
+.PageTitle{
+    margin-bottom:40px;
+}

@@ -22,7 +22,7 @@ const SlotHours = (props) => {
                     })}
 
                 />
-                <span>to</span>
+                <span className={classes.TimeInputsGap}>-</span>
                 <TimeField
                     label="End"
                     defaultValue={props.slot ? props.slot[1] : ''}
@@ -36,7 +36,10 @@ const SlotHours = (props) => {
                 />
             </div>
             {!props.hideRemove ?
-                <button onClick={() => props.removeSlot({ dayIndex: props.dayIndex, slotIndex: props.slotIndex })}>Remove</button>
+                <button
+                    onClick={() => props.removeSlot({ dayIndex: props.dayIndex, slotIndex: props.slotIndex })}
+                    className={classes.RemoveBtn}
+                >Remove</button>
                 : null}
         </div>
     )

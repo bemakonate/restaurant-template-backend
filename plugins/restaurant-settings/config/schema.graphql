@@ -16,9 +16,6 @@ module.exports = {
     restaurantSideProduct(id: ID): restaurantSettingsSideProduct!
     restaurantCategories(pickUpTime: String): [restaurantSettingsCategory!]
     restaurantCategory(id: ID, pickUpTime: String): restaurantSettingsCategory!
-
-
-
   `,
   type: {},
   resolver: {

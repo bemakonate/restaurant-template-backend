@@ -1,5 +1,3 @@
-
-
 import React, { memo, useEffect, useState, useContext } from 'react';
 import pluginId from '../../pluginId';
 import { request } from 'strapi-helper-plugin';
@@ -7,6 +5,7 @@ import { compare } from '../../utils/helpers';
 import EntityAvailability from '../../components/EntityAvailability';
 import { Button, Padded, InputNumber, Select } from '@buffetjs/core';
 import styled from 'styled-components'
+import classes from './BusinessHours.module.css';
 
 const defaultValues = {
   hours: {
@@ -103,8 +102,8 @@ const BusinessHoursPage = (props) => {
 
 
   return (
-    <div>
-      {isInitialSetUp ? <h1>Create New Business Setting </h1> : <h1>Business Setting </h1>}
+    <div className={classes.Container}>
+      {isInitialSetUp ? <h1 className={classes.PageTitle}>Create New Business Setting </h1> : <h1 className={classes.PageTitle}>Business Setting </h1>}
       <div>
         <Button color="success" label="Save" onClick={saveBtnClicked} disabled={isChangesSaved} />
       </div>

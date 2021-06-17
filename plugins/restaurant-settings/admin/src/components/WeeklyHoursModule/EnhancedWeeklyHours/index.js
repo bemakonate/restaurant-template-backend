@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import WeeklyHours from '../WeeklyHours';
+import classes from "./EnhancedWeeklyHours.module.css"
 
 const EnhancedWeeklyHours = (props) => {
     const [originWeeklyHours, setOriginWeeklyHours] = useState(null);
@@ -11,16 +12,11 @@ const EnhancedWeeklyHours = (props) => {
 
     return (
         <div>
-            <button onClick={() => setOriginWeeklyHours(null)}>Clear</button>
-            <button onClick={() => setOriginWeeklyHours(props.resetValue)}>Reset</button>
+            <button className={[classes.changeBtn, classes.clearBtn].join(' ')} onClick={() => setOriginWeeklyHours(null)}>Clear</button>
+            <button className={[classes.changeBtn, classes.resetBtn].join(' ')} onClick={() => setOriginWeeklyHours(props.resetValue)}>Reset</button>
             <WeeklyHours
                 originWeeklyHours={originWeeklyHours}
-                getWeeklyHoursStatus={props.getWeeklyHoursStatus}
-            // forceSubmit={props.forceSubmit}
-            // getCurrentMomentWeeklyHours={getCurrentMomentWeeklyHours}
-            // afterSubmit={props.afterSubmit}
-            // hideComponentSubmit
-            />
+                getWeeklyHoursStatus={props.getWeeklyHoursStatus} />
         </div>
     )
 }

@@ -187,8 +187,8 @@ const WeeklyHours = (props) => {
 
             const dayHrsJSX = (
                 <div key={day.value} className={dayHoursClasses.join(' ')}>
-                    <label htmlFor="">{day.name}</label>
-                    <input type="checkbox" value={day.value} onChange={(e) => dayOpenChanged(e)} checked={isOpen} />
+                    <label htmlFor="" className={classes.DayLabel}>{day.name}</label>
+                    <input className={classes.DayChecklist} type="checkbox" value={day.value} onChange={(e) => dayOpenChanged(e)} checked={isOpen} />
 
                     <DayHours
                         slots={weekdayHrs[dayValue]}
@@ -196,7 +196,7 @@ const WeeklyHours = (props) => {
                         updateSlot={updateSlot}
                         dayIndex={day.value} />
 
-                    <button onClick={() => addSlot(day.value)}>+</button>
+                    <button className={classes.AddSlotBtn} onClick={() => addSlot(day.value)}>+</button>
                 </div>
             )
             weekdayHrsJSX.push(dayHrsJSX)
@@ -209,7 +209,7 @@ const WeeklyHours = (props) => {
                 isSubmitBtnClicked,
                 daysOpen,
             }}>
-                <div>
+                <div className={classes.WeekdayHoursContainer}>
                     {weekdayHrsJSX}
                 </div>
 

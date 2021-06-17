@@ -1,0 +1,19 @@
+{
+  "kind": "singleType",
+  "collectionName": "ordering_pages",
+  "info": {
+    "name": "Ordering Page"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "orderingPlatforms": {
+      "type": "component",
+      "repeatable": true,
+      "component": "default.ordering-platform"
+    }
+  }
+}

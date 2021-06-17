@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_default_ordering_platforms",
+  "info": {
+    "name": "orderingPlatform",
+    "icon": "store",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string"
+    }
+  }
+}

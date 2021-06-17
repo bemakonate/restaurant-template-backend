@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_default_products",
+  "info": {
+    "name": "products",
+    "icon": "shopping-bag",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "products": {
+      "plugin": "restaurant-settings",
+      "collection": "product"
+    }
+  }
+}

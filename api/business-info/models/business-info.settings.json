@@ -1,0 +1,36 @@
+{
+  "kind": "singleType",
+  "collectionName": "business_infos",
+  "info": {
+    "name": "Business Info",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "companyName": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "biginteger"
+    },
+    "email": {
+      "type": "email"
+    },
+    "location": {
+      "type": "string"
+    },
+    "phone2": {
+      "type": "biginteger"
+    },
+    "facebookURL": {
+      "type": "string"
+    },
+    "instagramURL": {
+      "type": "string"
+    }
+  }
+}

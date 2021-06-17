@@ -46,7 +46,7 @@ export default strapi => {
           icon,
           label: {
             id: `${pluginId}.plugin.name`,
-            defaultMessage: 'Restaurant Settings',
+            defaultMessage: 'Business Hours',
           },
           name,
           permissions: [
