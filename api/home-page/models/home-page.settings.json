@@ -15,9 +15,8 @@
       "type": "text"
     },
     "popularProducts": {
-      "type": "component",
-      "repeatable": false,
-      "component": "default.products"
+      "plugin": "restaurant-settings",
+      "collection": "product"
     }
   }
 }
