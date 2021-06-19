@@ -1,18 +1,17 @@
 {
-  "collectionName": "components_testing_sub_categories",
+  "collectionName": "components_default_sub_categories",
   "info": {
     "name": "subCategory",
-    "icon": "equals",
-    "description": ""
+    "icon": "align-justify"
   },
   "options": {},
   "attributes": {
+    "title": {
+      "type": "string"
+    },
     "products": {
       "plugin": "restaurant-settings",
       "collection": "product"
-    },
-    "title": {
-      "type": "string"
     }
   }
 }
