@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categories",
+  "info": {
+    "name": "category",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true,
+    "increments": true,
+    "comment": ""
+  },
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "products": {
+      "plugin": "restaurant-settings",
+      "collection": "product",
+      "via": "categories",
+      "dominant": true
+    },
+    "subCategories": {
+      "type": "component",
+      "repeatable": true,
+      "component": "default.sub-category"
+    }
+  }
+}
