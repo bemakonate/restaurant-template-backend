@@ -31,6 +31,9 @@
     },
     "instagramURL": {
       "type": "string"
+    },
+    "yelpURL": {
+      "type": "string"
     }
   }
 }
